@@ -1,5 +1,4 @@
-import Head from 'next/head'
-import Link from 'next/link'
+import Head from 'next/head';
 
 export default function Home() {
   return (
@@ -10,31 +9,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <div>
-          
-          <ul>
-            <li>
-              <Link href="/">Оформить заказ</Link>
-            </li>
-            <li>
-              <Link href="/orders">Список заказов</Link>
-            </li>
-            <li>
-              <Link href="/ordercook">Заказы на кухне</Link>
-            </li>
-            <li>
-              <Link href="/check_user_promo">Проверка промокода клиента</Link>
-            </li>
-            <li>
-              <Link href="/map">Карта</Link>
-            </li>
-            
-          </ul>
-
-        </div>
-        
-      </main>
+      <div>
+        Оформить заказ
+      </div>
     </>
-  )
+  );
 }
