@@ -1,34 +1,107 @@
-import { SetStateAction, useState, useEffect } from 'react';
+'use client';
 
-import { MyTextInput, MySelect, MyDatePickerNew } from '../../../ui';
-import { useOrders } from '../store';
-import formatDate from '../../../helpers';
+import { SetStateAction, useState, useEffect, useCallback } from 'react';
+
+import { MyTextInput, MySelect, MyDatePickerNew } from '../../ui';
+
+import { useOrders } from './store';
+import formatDate from '../../lib';
 
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import { TableData } from './table';
 
-export const HeadOrders = () => {
-  const { citiesData } = useOrders(
-    (state: any) => ({
-      citiesData: state.cities,
-    })
-    // shallow
+function TabPanel(props: any) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
   );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index: any) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+type Data = {
+  point_id: number | string;
+  date: Date | string;
+};
+
+export const Form = () => {
+  const citiesData = useOrders((state: any) => state.cities);
+  const points = useOrders((state: any) => state.points);
+  const getDataTable = useOrders((state: any) => state.getDataTable);
 
   const [address, setAddress] = useState<string>('');
   const [number, setNumber] = useState<string>('');
   const [date, setDate] = useState<Date | string>(formatDate(new Date()));
   const [cities, setCities] = useState([]);
   const [cityId, setCityId] = useState<string>('');
+  const [pointId, setPointId] = useState<number | string>(0);
+  const [pointsList, setPointsList] = useState([]);
+  const [indexTab, setIndexTab] = useState<number>(0);
+
+  const getOrders = useCallback(
+    (point_id: number | string, indexTab: number) => {
+      // console.log(point_id);
+      // console.log(indexTab);
+
+      setNumber('');
+      setAddress('');
+      setIndexTab(indexTab);
+      setPointId(point_id);
+
+      const data: Data = {
+        point_id,
+        date: date,
+      };
+
+      // console.log(data);
+
+      getDataTable('get_orders', data);
+    },
+    [date, getDataTable]
+  );
 
   useEffect(() => {
+    const pointsList = points.filter(
+      (item: { city_id: string }) =>
+        parseInt(item.city_id) == parseInt(citiesData[0].id)
+    );
+
+    getOrders(pointsList[0]?.id, 0);
+
+    setPointsList(pointsList);
+    setPointId(pointsList[0]?.id);
     setCities(citiesData);
     setCityId(citiesData[0]?.id);
-  }, [citiesData]);
+  }, [citiesData, getOrders, points]);
 
-  console.log('render HeadOrders');
+  console.log('render Form');
 
-  // console.log(citiesData);
+  // console.log(points);
 
   const changeAddress = (event: {
     target: { value: SetStateAction<string> };
@@ -129,11 +202,34 @@ export const HeadOrders = () => {
       <Grid item xs={12} sm={3}>
         <Button
           variant="contained"
-          // onClick={this.btnGetOrders.bind(this)}
+          onClick={() => getOrders(pointId, indexTab)}
         >
           Обновить
         </Button>
       </Grid>
+
+      <Grid item xs={12}>
+        <Tabs
+          value={indexTab}
+          TabIndicatorProps={{
+            style: {
+              backgroundColor: 'inherit',
+            },
+          }}
+          className="TabsOrders"
+        >
+          {pointsList.map((item: any, key: number) => (
+            <Tab
+              key={key}
+              label={item.name}
+              onClick={() => getOrders(parseInt(item.id), key)}
+              {...a11yProps(parseInt(item.id))}
+            />
+          ))}
+        </Tabs>
+      </Grid>
+
+      <TableData number={number} address={address} />
     </Grid>
   );
 };
