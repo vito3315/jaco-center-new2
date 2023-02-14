@@ -46,7 +46,7 @@ export const Form = () => {
       setPointId(point_id);
     }
 
-    if(index) {
+    if(index || index === 0) {
       setIndexTab(index);
     }
 
