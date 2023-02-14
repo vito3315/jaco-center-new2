@@ -5,12 +5,13 @@ import TextField from '@mui/material/TextField';
 
 import ruLocale from 'date-fns/locale/ru';
 
-import formatDate from '../lib';
+import { formatDate } from '../lib';
 
 type DatePickerProps = {
   label?: string;
   value: Date | string;
-  func: (value: string | Date | null, keyboardInputValue?: string | undefined) => void
+  // func: (value: string | Date | null, keyboardInputValue?: string | undefined) => void;
+  func: (value: string | Date | null) => void;
 }
 
 export const MyDatePickerNew = (props: DatePickerProps) => {

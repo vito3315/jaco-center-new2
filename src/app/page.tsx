@@ -1,10 +1,3 @@
-
 export default function Home() {
-  return (
-    <>
-      <div>
-        Оформить заказ
-      </div>
-    </>
-  );
+  return <div>Оформить заказ</div>;
 }
