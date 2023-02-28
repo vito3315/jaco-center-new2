@@ -41,5 +41,5 @@
   ],
 
   "strict": true,
-  // "noImplicitAny": true,
+  "noImplicitAny": true,
 }

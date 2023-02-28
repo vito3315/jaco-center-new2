@@ -1,12 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import { Header } from '../components/header/header';
-import Loading from './loading';
 
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Suspense } from 'react';
 
 import '../styles/globals.css';
 import '../styles/general.scss';
@@ -16,10 +15,6 @@ const theme = createTheme({
     primary: {
       main: '#c03',
     },
-    // def: {
-    //   main: '#353b48',
-    //   secondary: '#fff',
-    // },
     secondary: {
       main: '#6ab04c',
     },
@@ -40,11 +35,8 @@ export default function RootLayout({
             <main style={{ flexGrow: 1, overflow: 'auto' }}>
               <CssBaseline />
               <Header />
-              <Suspense fallback={<Loading />} />
-              <Container
-                maxWidth={false}
-                style={{ paddingTop: 32, paddingBottom: 32, width: '100%' }}
-              >
+              <Suspense fallback={<p>Loading...</p>} />
+              <Container maxWidth={false} style={{ paddingTop: 32, paddingBottom: 32, width: '100%' }}>
                 {children}
               </Container>
             </main>

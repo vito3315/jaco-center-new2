@@ -1,11 +1,15 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+
 import { useEffect } from 'react';
 import { getData } from './hooks';
 
 import Loading from './loading';
-import { Form } from './form';
-import { TableData } from './table';
+const Form = dynamic<{}>(() => import('./form'), { loading: () =>  <Loading />, ssr: false });
+import TableData from './table';
+import Order from './order';
+import Close from './close';
 
 export default function OrdersPage() {
   console.log('render PageOrders');
@@ -20,6 +24,8 @@ export default function OrdersPage() {
       <Loading />
       <Form />
       <TableData />
+      <Order />
+      <Close />
     </>
   );
 }

@@ -10,13 +10,12 @@ import { formatDate } from '../lib';
 type DatePickerProps = {
   label?: string;
   value: Date | string;
-  // func: (value: string | Date | null, keyboardInputValue?: string | undefined) => void;
   func: (value: string | Date | null) => void;
 }
 
 export const MyDatePickerNew = (props: DatePickerProps) => {
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns} locale={ruLocale}>
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ruLocale}>
       <DatePicker
         mask="____-__-__"
         inputFormat="yyyy-MM-dd"

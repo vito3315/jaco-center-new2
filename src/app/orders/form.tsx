@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 import { MyTextInput, MySelect, MyDatePickerNew } from '../../ui';
-import { useOrders, ordersState, City, Point } from './store';
+import { useOrders, ordersState, Point } from './store';
 import { formatDate, a11yProps } from '../../lib';
 import { getData } from './hooks';
 
@@ -12,64 +12,39 @@ import Button from '@mui/material/Button';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 
-type Data = {
-  point_id: number | string;
-  date: Date | string;
-};
-
-
-export const Form = () => {
+export default function Form() {
   console.log('render Form');
 
-  const citiesData = useOrders((state: ordersState) => state.cities);
+  const cities = useOrders((state: ordersState) => state.cities);
   const points = useOrders((state: ordersState) => state.points);
+  const status = useOrders((state: ordersState) => state.status);
+
+  const pointsFilter = points.filter((item: { city_id: string }) => parseInt(item.city_id) == parseInt(cities[0].id));
 
   const [address, setAddress] = useState<string>('');
   const [number, setNumber] = useState<string>('');
   const [date, setDate] = useState<Date | string>(formatDate(new Date()));
 
-  const [cities, setCities] = useState<City[] | []>([]);
-  const [cityId, setCityId] = useState<string>('');
-
-  const [pointId, setPointId] = useState<number | string>(0);
-  const [pointsList, setPointsList] = useState<Point[] | []>([]);
+  const [cityId, setCityId] = useState<string>(cities[0]?.id ?? '');
+  const [pointId, setPointId] = useState<number | string>(pointsFilter[0]?.id ?? 0);
+  const [pointsList, setPointsList] = useState<Point[]>(pointsFilter);
 
   const [indexTab, setIndexTab] = useState<number>(0);
 
-  const getOrders = useCallback((point_id?: number | string, index?: number) => {
-    
-    setNumber('');
-    setAddress('');
-    useOrders.setState({ number: '', address: '' });
-
-    if(point_id) {
-      setPointId(point_id);
-    }
-
-    if(index || index === 0) {
-      setIndexTab(index);
-    }
-
-    const data: Data = {
-      point_id: point_id ?? pointId,
-      date,
-    };
-
-    getData('get_orders', data);
-
-  }, [date, pointId]);
-
   useEffect(() => {
-    const pointsList = points.filter((item: { city_id: string }) => parseInt(item.city_id) == parseInt(citiesData[0].id));
-    setPointsList(pointsList);
-    setPointId(pointsList[0]?.id);
-    setCities(citiesData);
-    setCityId(citiesData[0]?.id);
-  }, [citiesData, points]);
+    if (status) {
+      useOrders.setState({ pointId });
 
-  useEffect(() => {
-    getOrders();
-  }, [getOrders]);
+      const data = {
+        point_id: pointId,
+        date,
+      };
+
+      getData('get_orders', data);
+
+      useOrders.setState({ status: false });
+    }
+  }, [date, pointId, status]);
 
   const changeAddress = (event: { target: { value: string } }) => {
     setAddress(event.target.value);
@@ -81,28 +56,52 @@ export const Form = () => {
 
     if (onlyNums.length < 11) {
       setNumber(onlyNums);
+      useOrders.setState({ number: onlyNums });
     }
-
-    if (onlyNums.length === 11) {
-      const number = onlyNums.replace(/(\8)(\d{3})(\d{3})(\d{2})(\d{2})/gi, '$1 ($2) $3 $4-$5');
-      setNumber(number);
-    }
-
-    useOrders.setState({ number: onlyNums });
   };
 
   const changeCity = (event: { target: { value: string } }) => {
-
-    const pointsList = points.filter((item) => parseInt(item.city_id) == parseInt(event.target.value));
+    const pointsList = points.filter(
+      (item) => parseInt(item.city_id) == parseInt(event.target.value)
+    );
 
     setCityId(event.target.value);
     setPointsList(pointsList);
     setPointId(pointsList[0].id);
     setIndexTab(0);
+
+    setData();
   };
 
   const changeDate = (value: string | Date | null) => {
     setDate(value ? formatDate(value) : '');
+
+    setData();
+  };
+
+  const setData = (point_id?: number | string, index?: number) => {
+    setNumber('');
+    setAddress('');
+    useOrders.setState({ number: '', address: '', orders: [], status: true });
+
+    if (point_id) {
+      setPointId(point_id);
+    }
+
+    if (index || index === 0) {
+      setIndexTab(index);
+    }
+  };
+
+  const updateData = () => {
+    const data = {
+      point_id: pointId,
+      date,
+    };
+
+    getData('get_orders', data);
+
+    setData();
   };
 
   return (
@@ -122,14 +121,18 @@ export const Form = () => {
       </Grid>
 
       <Grid item xs={12} sm={3}>
-        <MyTextInput label="Номер телефона" value={number} func={changeNumber} />
+        <MyTextInput
+          label="Номер телефона"
+          value={number}
+          func={changeNumber}
+        />
       </Grid>
       <Grid item xs={12} sm={3}>
         <MyTextInput label="Адрес" value={address} func={changeAddress} />
       </Grid>
 
       <Grid item xs={12} sm={3}>
-        <Button variant="contained" onClick={() => getOrders()}>
+        <Button variant="contained" onClick={() => updateData()}>
           Обновить
         </Button>
       </Grid>
@@ -137,14 +140,18 @@ export const Form = () => {
       <Grid item xs={12}>
         <Tabs
           value={indexTab}
-          TabIndicatorProps={{ style: { backgroundColor: 'inherit' }}}
+          TabIndicatorProps={{ style: { backgroundColor: 'inherit' } }}
           className="TabsOrders"
         >
-          {pointsList.map((item: { id: string; name: string; city_id: string }, key: number) => (
+          {pointsList.map(
+            (
+              item: { id: string; name: string; city_id: string },
+              key: number
+            ) => (
               <Tab
                 key={key}
                 label={item.name}
-                onClick={() => getOrders(parseInt(item.id), key)}
+                onClick={() => setData(parseInt(item.id), key)}
                 {...a11yProps(parseInt(item.id))}
               />
             )
@@ -153,4 +160,4 @@ export const Form = () => {
       </Grid>
     </Grid>
   );
-};
+}
