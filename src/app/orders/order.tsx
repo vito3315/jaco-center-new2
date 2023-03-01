@@ -1,6 +1,8 @@
 'use client';
 
-import { useOrders, ordersState } from './store';
+import { useOrders } from './store';
+import { ordersState } from './types';
+import { shallow } from 'zustand/shallow';
 
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -26,91 +28,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 export default function Order() {
   console.log('render Order');
 
-  const showOrder = useOrders((state: ordersState) => state.showOrder);
-  const openOrder = useOrders((state: ordersState) => state.openOrder);
-  // const allItems = useOrders((state: ordersState) => state.allItems);
+  const { showOrder, openOrder } = useOrders((state: ordersState) => state, shallow);
 
+  // сделать после страницы Оформить заказ
   const repeatOrder = () => {};
-
-  // const repeatOrder = () => {
-  //   let my_cart = [];
-  //   let item_info = null;
-
-  //   localStorage.setItem('cityID', city_id);
-
-  //   if (showOrder.order.promo_name && showOrder.order.promo_name != '') {
-  //     itemsStore.setPromo(
-  //       JSON.stringify(showOrder.promo_info),
-  //       showOrder.order.promo_name
-  //     );
-
-  //     if (parseInt(showOrder.promo_info.promo_action) == 2) {
-  //     }
-  //   }
-
-  //   showOrder.order_items.map((item) => {
-  //     item_info = allItems.find((it) => it.id === item.item_id);
-
-  //     if (item_info) {
-  //       const price = parseInt(item_info.price);
-  //       const all_price = parseInt(item.count) * parseInt(item_info.price);
-
-  //       my_cart.push({
-  //         name: item.name,
-  //         item_id: item.item_id,
-  //         count: item.count,
-
-  //         one_price: price,
-  //         all_price,
-  //       });
-  //     }
-  //   });
-
-  //   if (showOrder.order.promo_name && showOrder.order.promo_name != '') {
-  //     if (parseInt(showOrder.promo_info.promo_action) == 2) {
-  //       showOrder.promo_info.items_add.map((item_add, key) => {
-  //         my_cart.map((item_cart, key_cart) => {
-  //           if (parseInt(item_cart.item_id) == parseInt(item_add.item_id)) {
-  //             my_cart[key_cart]['count'] -= parseInt(item_add.count);
-  //             my_cart[key_cart]['all_price'] =
-  //               parseInt(my_cart[key_cart]['count']) *
-  //               parseInt(item_cart.price);
-  //           }
-  //         });
-  //       });
-  //     }
-  //   }
-
-  //   localStorage.setItem('clientNumber', showOrder.order.number);
-
-  //   let data = {
-  //     orderType: parseInt(showOrder.order.type_order_) - 1 == 0 ? 0 : 1,
-  //     orderAddr: showOrder.street.name,
-  //     orderPic: parseInt(showOrder.order.point_id),
-  //     orderComment: showOrder.order.comment,
-
-  //     orderTimes: parseInt(showOrder.order.is_preorder),
-  //     orderPredDay:
-  //       parseInt(showOrder.order.is_preorder) == 1
-  //         ? showOrder.order.date_time_pred.date
-  //         : '',
-  //     orderPredTime:
-  //       parseInt(showOrder.order.is_preorder) == 1
-  //         ? showOrder.order.date_time_pred.time
-  //         : '',
-
-  //     orderPay: parseInt(showOrder.order.type_order_) == 1 ? 'cash' : 'in',
-  //     orderSdacha: showOrder.order.sdacha,
-  //   };
-
-  //   itemsStore.saveCartData(data);
-
-  //   itemsStore.setItems(my_cart);
-
-  //   // setTimeout(()=>{
-  //   //   window.location.pathname = '/';
-  //   // }, 500)
-  // };
+  const fakeUser = () => {};
 
   return (
     <Dialog
@@ -310,7 +232,9 @@ export default function Order() {
             variant="contained"
             style={{ marginRight: 24 }}
           >
-            <Button variant="contained" onClick={repeatOrder}>
+            <Button variant="contained" 
+            onClick={repeatOrder}
+            >
               Повторить заказ
             </Button>
           </ButtonGroup>
@@ -331,7 +255,7 @@ export default function Order() {
           >
             <Button
               variant="contained"
-              // onClick={this.fakeUser.bind(this)}
+              onClick={fakeUser}
             >
               Клиент не вышел на связь
             </Button>

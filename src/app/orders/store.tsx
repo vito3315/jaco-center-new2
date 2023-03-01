@@ -1,231 +1,239 @@
 import { create } from 'zustand';
+import { api } from '../../components/api';
 
-export interface Order {
-  point_id: string;
-  id: string;
-  client_id: string;
-  user_id: string;
-  date_time_order: string;
-  date_time_preorder: string;
-  date_time_preorder_or: string;
-  give_data_time: string;
-  date_time_delete?: any;
-  close_order: string;
-  unix_time: string;
-  is_preorder: string;
-  street: string;
-  home: string;
-  order_price: string;
-  is_delete: string;
-  type_order: string;
-  type_origin: string;
-  unix_time_to_client: string;
-  type_pay: string;
-  status: string;
-  status_order: string;
-  number: string;
-  driver?: any;
-  login?: any;
-  dist: string;
-  type_user: string;
-  time: string;
-  need_time: string;
-  to_time_sec: number;
-  to_time: string;
-}
+import { ordersState } from './types';
 
-export interface City {
-  id: string;
-  name: string;
-}
+import { formatDate } from '../../lib';
 
-export interface Point {
-  id: string;
-  name: string;
-  city_id: string;
-}
-
-export interface DateTimePred {
-  date: string;
-  time: string;
-}
-
-export interface showOrder {
-  order_id: string;
-  number: string;
-  sum_order: string;
-  sum_div: string;
-  type_order_: string;
-  status_order: string;
-  point_id: string;
-  is_delete: string;
-  date_time_delete?: any;
-  sdacha: string;
-  textTime: string;
-  time: string;
-  street: string;
-  home: string;
-  pd: string;
-  kv: string;
-  et: string;
-  fake_dom: string;
-  comment: string;
-  type_order: string;
-  type_order_addr: string;
-  type_order_addr_new: string;
-  time_order: string;
-  time_order_name: string;
-  is_preorder: string;
-  promo_name?: any;
-  promo_text?: any;
-  unix_time_to_client: string;
-  del_name?: any;
-  del_type: string;
-  delete_reason: string;
-  date_time_preorder_or: string;
-  date_time_pred: DateTimePred;
-  this_status_order: string;
-  time_to_client: number;
-  text_time: string;
-  check_pos: any;
-  check_pos_drive?: any;
-}
-
-export interface OrderItem {
-  id: string;
-  name: string;
-  item_id: string;
-  count: string;
-  price: string;
-}
-
-export interface OrderItem2 {
-  name: string;
-  count: string;
-  ready: string;
-  isready: string;
-  noready: string;
-}
-
-export interface Summ {
-  min?: any;
-  max?: any;
-}
-
-export interface Dows {
-  1?: any;
-  2?: any;
-  3?: any;
-  4?: any;
-  5?: any;
-  6?: any;
-  7?: any;
-}
-
-export interface DateTime {
-  min?: any;
-  max?: any;
-}
-
-export interface Time {
-  min?: any;
-  max?: any;
-}
-
-export interface Limits {
-  type_order?: any;
-  type_order_info: string;
-  only_site?: any;
-  only_kassa?: any;
-  only_site_kassa_info: string;
-  summ: Summ;
-  free_drive?: any;
-  items: any[];
-  point_id?: any;
-  dows: Dows;
-  dows_info: string;
-  date: DateTime;
-  time: Time;
-}
-
-export interface PromoText {
-  true?: any;
-  false: string;
-}
-
-export interface PromoInfo {
-  promo_action?: any;
-  limits: Limits;
-  items_on_price: any[];
-  sale: any[];
-  promo_text: PromoText;
-  items_add: any[];
-  status_promo: boolean;
-}
-
-export interface Name {
-  id: string;
-  street: string;
-  home: string;
-  point_id: string;
-  xy: string;
-  kv: string;
-  pd: string;
-  et: string;
-  dom_true: string;
-  fake_dom: string;
-  city_name: string;
-  sum_div: string;
-  free_drive: string;
-}
-
-export interface Street {
-  id: string;
-  name: Name;
-}
-
-export interface orderRootObject {
-  order: showOrder;
-  order_items: OrderItem[];
-  order_items_: OrderItem2[];
-  promo_info: PromoInfo;
-  street: Street;
-}
-
-export interface ordersState {
-  loading: boolean;
-  error: null | Error;
-  cities: City[];
-  points: Point[];
-  allItems: Array<{ id: string; name: string; price: string }>;
-  orders: Order[];
-  number: string;
-  address: string;
-  order: Order;
-  pointId: number | string;
-  showOrder: orderRootObject;
-  openOrder: boolean;
-  openClose: boolean;
-  openAlert: boolean;
-  status: boolean;
-  text: string;
-}
-
-export const useOrders = create<ordersState>((set) => ({
+export const useOrders = create<ordersState>((set, get) => ({
   number: '',
   address: '',
   loading: false,
-  error: null,
   cities: [],
   points: [],
+  pointsCopy: [],
   allItems: [],
   orders: [],
+  ordersCopy: [],
   order: null,
   pointId: 0,
+  cityId: '',
+  indexTab: 0,
+  date: formatDate(new Date()),
   showOrder: null,
   openOrder: false,
   openClose: false,
   openAlert: false,
   status: false,
   text: '',
+
+  filterOrders: () => {
+    let ordersCopy = structuredClone(get().ordersCopy);
+
+    if (get().number.length > 0) {
+      ordersCopy = ordersCopy.filter(
+        (item: { number: string }) => item.number.indexOf(get().number) !== -1
+      );
+    }
+
+    if (get().address.length > 0) {
+      ordersCopy = ordersCopy.filter(
+        (item: { street: string; home: string }) =>
+          (item.street + ' ' + item.home)
+            .toLowerCase()
+            .indexOf(get().address.toLowerCase()) !== -1
+      );
+    }
+
+    set({
+      orders: ordersCopy,
+    });
+  },
+
+  filterPoints: (city_id) => {
+    const pointsCopy = structuredClone(get().pointsCopy);
+
+    const points = pointsCopy.filter(
+      (item) => parseInt(item.city_id) == parseInt(city_id)
+    );
+
+    set({
+      points,
+    });
+  },
+
+  changeCity: (event) => {
+    const pointsCopy = structuredClone(get().pointsCopy);
+
+    const points = pointsCopy.filter(
+      (item) => parseInt(item.city_id) == parseInt(event.target.value)
+    );
+
+    set({
+      points,
+      pointId: points[0].id,
+      cityId: event.target.value,
+      indexTab: 0,
+    });
+
+    get().setData();
+  },
+
+  changeAddress: (event) => {
+    set({
+      address: event.target.value,
+    });
+
+    get().filterOrders();
+  },
+
+  changeNumber: (event) => {
+    const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+
+    if (onlyNums.length < 11) {
+      set({
+        number: onlyNums,
+      });
+    }
+
+    get().filterOrders();
+  },
+
+  changeDate: (value) => {
+    set({
+      date: value ? formatDate(value) : '',
+    });
+
+    get().setData();
+  },
+
+  setData: (point_id, index) => {
+    set({
+      number: '',
+      address: '',
+      orders: [],
+    });
+
+    if (point_id) {
+      set({
+        pointId: point_id,
+      });
+    }
+
+    if (index || index === 0) {
+      set({
+        indexTab: index,
+      });
+    }
+
+    const data = {
+      point_id: point_id ?? get().pointId,
+      date: get().date,
+    };
+
+    get().getOrders(data);
+  },
+
+  getDataForm: async () => {
+    set({ loading: true });
+
+    const data = {
+      type: 'get_center_all',
+    };
+
+    const result = await api(data);
+
+    set({
+      status: true,
+      pointId: result.cities[0].id,
+      cityId: result.cities[0].id,
+      cities: result.cities,
+      points: result.points,
+      pointsCopy: result.points,
+      allItems: result.all_items,
+      loading: false,
+    });
+
+    get().filterPoints(result.cities[0].id);
+
+    const obj = {
+      point_id: result.cities[0].id,
+      date: get().date,
+    };
+
+    get().getOrders(obj);
+  },
+
+  getOrders: async (obj) => {
+    set({ loading: true });
+
+    const data = {
+      type: 'get_orders',
+      date: obj.date,
+      point_id: obj.point_id,
+    };
+
+    const result = await api(data);
+
+    set({
+      orders: result.orders,
+      ordersCopy: result.orders,
+      loading: false,
+    });
+  },
+
+  getOrder: async (order_id) => {
+    set({ loading: true });
+
+    const data = {
+      type: 'get_order',
+      point_id: get().pointId,
+      order_id,
+    };
+
+    const result = await api(data);
+
+    set({
+      openOrder: true,
+      showOrder: result,
+      loading: false,
+    });
+  },
+
+  closeOrder: async (obj) => {
+    set({ loading: true });
+
+    const data = {
+      type: 'close_order_center',
+      // token: localStorage.getItem('token'),
+      typeCreate: obj.typeCreate,
+      order_id: obj.order_id,
+      point_id: obj.point_id,
+      ans: obj.ans,
+    };
+
+    const result = await api(data);
+
+    if (result.st) {
+      set({
+        openOrder: false,
+        openClose: false,
+        loading: false,
+      });
+
+      const obj = {
+        point_id: get().pointId,
+        date: get().date,
+      };
+
+      get().getOrders(obj);
+    } else {
+      set({
+        status: result.st,
+        text: result.text,
+        openAlert: true,
+        loading: false,
+      });
+    }
+  },
 }));

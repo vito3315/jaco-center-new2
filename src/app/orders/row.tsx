@@ -1,7 +1,7 @@
 'use client';
 
-import { getData } from './hooks';
-import { useOrders, ordersState } from './store';
+import { useOrders } from './store';
+import { ordersState } from './types';
 
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -9,18 +9,7 @@ import TableRow from '@mui/material/TableRow';
 export const Row = ({ item }) => {
   console.log('render Row');
 
-  const pointId = useOrders((state: ordersState) => state.pointId);
-
-  const showOrder = (order_id: string | number) => {
-    const data = {
-      point_id: pointId,
-      order_id,
-    };
-
-    getData('get_order', data);
-
-    useOrders.setState({ openOrder: true });
-  };
+  const getOrder = useOrders((state: ordersState) => state.getOrder);
 
   return (
     <TableRow
@@ -49,7 +38,7 @@ export const Row = ({ item }) => {
                 fontWeight: 'inherit',
               }
         }
-        onClick={() => showOrder(item.id)}
+        onClick={() => getOrder(item.id)}
       >
         {item.id}
       </TableCell>

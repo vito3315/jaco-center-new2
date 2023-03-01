@@ -1,7 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
-import { Header } from '../components/header/header';
+import { Header } from '../components/header';
 
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -35,7 +34,6 @@ export default function RootLayout({
             <main style={{ flexGrow: 1, overflow: 'auto' }}>
               <CssBaseline />
               <Header />
-              <Suspense fallback={<p>Loading...</p>} />
               <Container maxWidth={false} style={{ paddingTop: 32, paddingBottom: 32, width: '100%' }}>
                 {children}
               </Container>

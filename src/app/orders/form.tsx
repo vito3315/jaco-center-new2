@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { shallow } from 'zustand/shallow';
 
 import { MyTextInput, MySelect, MyDatePickerNew } from '../../ui';
-import { useOrders, ordersState, Point } from './store';
-import { formatDate, a11yProps } from '../../lib';
-import { getData } from './hooks';
+import { useOrders } from './store';
+import { ordersState } from './types';
+import { a11yProps } from '../../lib';
 
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -15,96 +16,17 @@ import Tab from '@mui/material/Tab';
 export default function Form() {
   console.log('render Form');
 
-  const cities = useOrders((state: ordersState) => state.cities);
-  const points = useOrders((state: ordersState) => state.points);
-  const status = useOrders((state: ordersState) => state.status);
-
-  const pointsFilter = points.filter((item: { city_id: string }) => parseInt(item.city_id) == parseInt(cities[0].id));
-
-  const [address, setAddress] = useState<string>('');
-  const [number, setNumber] = useState<string>('');
-  const [date, setDate] = useState<Date | string>(formatDate(new Date()));
-
-  const [cityId, setCityId] = useState<string>(cities[0]?.id ?? '');
-  const [pointId, setPointId] = useState<number | string>(pointsFilter[0]?.id ?? 0);
-  const [pointsList, setPointsList] = useState<Point[]>(pointsFilter);
-
-  const [indexTab, setIndexTab] = useState<number>(0);
+  const {cities, points, cityId, number, address, date, indexTab, 
+    changeCity, changeAddress, changeNumber, setData, changeDate, getDataForm} = useOrders((state: ordersState) => state, shallow);
 
   useEffect(() => {
-    if (status) {
-      useOrders.setState({ pointId });
-
-      const data = {
-        point_id: pointId,
-        date,
-      };
-
-      getData('get_orders', data);
-
-      useOrders.setState({ status: false });
-    }
-  }, [date, pointId, status]);
-
-  const changeAddress = (event: { target: { value: string } }) => {
-    setAddress(event.target.value);
-    useOrders.setState({ address: event.target.value });
-  };
-
-  const changeNumber = (event: { target: { value: string } }) => {
-    const onlyNums = event.target.value.replace(/[^0-9]/g, '');
-
-    if (onlyNums.length < 11) {
-      setNumber(onlyNums);
-      useOrders.setState({ number: onlyNums });
-    }
-  };
-
-  const changeCity = (event: { target: { value: string } }) => {
-    const pointsList = points.filter(
-      (item) => parseInt(item.city_id) == parseInt(event.target.value)
-    );
-
-    setCityId(event.target.value);
-    setPointsList(pointsList);
-    setPointId(pointsList[0].id);
-    setIndexTab(0);
-
-    setData();
-  };
-
-  const changeDate = (value: string | Date | null) => {
-    setDate(value ? formatDate(value) : '');
-
-    setData();
-  };
-
-  const setData = (point_id?: number | string, index?: number) => {
-    setNumber('');
-    setAddress('');
-    useOrders.setState({ number: '', address: '', orders: [], status: true });
-
-    if (point_id) {
-      setPointId(point_id);
-    }
-
-    if (index || index === 0) {
-      setIndexTab(index);
-    }
-  };
-
-  const updateData = () => {
-    const data = {
-      point_id: pointId,
-      date,
-    };
-
-    getData('get_orders', data);
-
-    setData();
-  };
+    getDataForm();
+    document.title = 'Оформленные заказы';
+  }, [getDataForm]);
 
   return (
+    <>
+    {!points.length ? null :
     <Grid container spacing={3}>
       <Grid item xs={12} sm={3}>
         <MySelect
@@ -132,7 +54,7 @@ export default function Form() {
       </Grid>
 
       <Grid item xs={12} sm={3}>
-        <Button variant="contained" onClick={() => updateData()}>
+        <Button variant="contained" onClick={() => setData()}>
           Обновить
         </Button>
       </Grid>
@@ -143,7 +65,7 @@ export default function Form() {
           TabIndicatorProps={{ style: { backgroundColor: 'inherit' } }}
           className="TabsOrders"
         >
-          {pointsList.map(
+          {points.map(
             (
               item: { id: string; name: string; city_id: string },
               key: number
@@ -159,5 +81,7 @@ export default function Form() {
         </Tabs>
       </Grid>
     </Grid>
+}
+    </>
   );
 }

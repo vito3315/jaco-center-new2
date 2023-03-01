@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useOrders, ordersState } from './store';
-import { getData } from './hooks';
-import { MyAlert } from '../../ui';
+import { shallow } from 'zustand/shallow';
+import { useOrders } from './store';
+import { ordersState } from './types';
+import { MyAlert, MyTextInput } from '../../ui';
 
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -17,16 +18,11 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
 
 export default function Close() {
   console.log('render Close');
 
-  const showOrder = useOrders((state: ordersState) => state.showOrder);
-  const openClose = useOrders((state: ordersState) => state.openClose);
-  const openAlert = useOrders((state: ordersState) => state.openAlert);
-  const status = useOrders((state: ordersState) => state.status);
-  const textAlert = useOrders((state: ordersState) => state.text);
+  const {showOrder, openClose, openAlert, status, text, closeOrder } = useOrders((state: ordersState) => state, shallow);
 
   const radiogroup_options = [
     { id: '0', label: 'Решили отредактировать заказ', value: 0 },
@@ -36,23 +32,25 @@ export default function Close() {
     { id: '4', label: 'Другое', value: 0 },
   ];
 
-  const [text, setText] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
   const [type, setType] = useState<string>('-1');
   const [confirm, setConfirm] = useState<boolean>(false);
 
   const changeType = (event: { target: { value: string } }) => {
+    setComment('');
     setType(event.target.value);
   };
 
-  const changeText = (event: { target: { value: string } }) => {
-    setText(event.target.value);
+  const changeComment = (event: { target: { value: string } }) => {
+    setType('4');
+    setComment(event.target.value);
   };
 
   const openConfirm = () => {
     setConfirm(true);
   };
 
-  const closeOrder = () => {
+  const close = () => {
     setConfirm(false);
 
     const deltype = radiogroup_options.find((item) => item.id === type);
@@ -61,10 +59,10 @@ export default function Close() {
       typeCreate: 'center',
       order_id: showOrder.order.order_id,
       point_id: showOrder.order.point_id,
-      ans: parseInt(deltype.id) == 4 ? text : deltype.label,
+      ans: parseInt(deltype.id) == 4 ? comment : deltype.label,
     };
 
-    getData('close_order_center', data);
+    closeOrder(data);
   };
 
   return (
@@ -73,7 +71,7 @@ export default function Close() {
         isOpen={openAlert}
         onClose={() => useOrders.setState({ openAlert: false })}
         status={status}
-        text={textAlert}
+        text={text}
       />
 
       <Dialog
@@ -89,8 +87,13 @@ export default function Close() {
           {`Отменить заказ # ${showOrder?.order.order_id} ?`}
         </DialogContent>
         <DialogActions>
-          <Button style={{ color: '#00a550' }} onClick={() => setConfirm(false)}>Нет</Button>
-          <Button onClick={closeOrder}>Да</Button>
+          <Button
+            style={{ color: '#00a550' }}
+            onClick={() => setConfirm(false)}
+          >
+            Нет
+          </Button>
+          <Button onClick={close}>Да</Button>
         </DialogActions>
       </Dialog>
 
@@ -117,16 +120,8 @@ export default function Close() {
             </RadioGroup>
           </FormControl>
 
-          <TextField
-            onFocus={() => setType('4')}
-            value={text}
-            onChange={changeText}
-            margin="dense"
-            id="name"
-            label="Причина отмены"
-            type="text"
-            fullWidth
-          />
+          <MyTextInput label="Причина отмены" value={comment} func={changeComment} />
+         
         </DialogContent>
 
         <DialogActions style={{ paddingBottom: 24 }}>
