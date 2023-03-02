@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
 
