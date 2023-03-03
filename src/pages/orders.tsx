@@ -1,8 +1,5 @@
-import { useOrders } from '../../modules/orders/store';
-import { ordersState } from '../../modules/orders/types';
-
-import Loading from '../../components/loading';
-import Form from '../../modules/orders/form';
+import { useOrders, ordersState, Form, TableData, Order, Close } from "@/modules/orders";
+import Loading from "@/components/loading";
 
 export default function Orders() {
   console.log('render OrdersPAge');
@@ -13,6 +10,9 @@ export default function Orders() {
     <>
       <Loading loading={loading}/>
       <Form />
+      <TableData />
+      <Order />
+      <Close />
     </>
   );
 }

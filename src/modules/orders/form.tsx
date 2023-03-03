@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
 
-import { MyTextInput, MySelect, MyDatePickerNew } from '../../ui';
+import { MyDatePickerNew, MySelect, MyTextInput } from '@/ui';
+import { a11yProps } from '@/lib';
 import { useOrders } from './store';
 import { ordersState } from './types';
-import { a11yProps } from '../../lib';
 
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -63,11 +63,7 @@ export default function Form() {
           TabIndicatorProps={{ style: { backgroundColor: 'inherit' } }}
           className="TabsOrders"
         >
-          {points.map(
-            (
-              item: { id: string; name: string; city_id: string },
-              key: number
-            ) => (
+          {points.map((item: { id: string; name: string; city_id: string }, key: number) => (
               <Tab
                 key={key}
                 label={item.name}

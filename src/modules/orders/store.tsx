@@ -1,9 +1,7 @@
 import { create } from 'zustand';
-import { api } from '../../components/api';
-
 import { ordersState } from './types';
-
-import { formatDate } from '../../lib';
+import { api } from '@/components/api';
+import { formatDate } from '@/lib';
 
 export const useOrders = create<ordersState>((set, get) => ({
   number: '',
@@ -27,47 +25,35 @@ export const useOrders = create<ordersState>((set, get) => ({
   status: false,
   text: '',
 
+  // фильтр для заказов в таблице по номеру или адресу клиента
   filterOrders: () => {
     let ordersCopy = structuredClone(get().ordersCopy);
 
     if (get().number.length > 0) {
-      ordersCopy = ordersCopy.filter(
-        (item: { number: string }) => item.number.indexOf(get().number) !== -1
-      );
+      ordersCopy = ordersCopy.filter((item: { number: string }) => item.number.indexOf(get().number) !== -1);
     }
 
     if (get().address.length > 0) {
-      ordersCopy = ordersCopy.filter(
-        (item: { street: string; home: string }) =>
-          (item.street + ' ' + item.home)
-            .toLowerCase()
-            .indexOf(get().address.toLowerCase()) !== -1
-      );
+      ordersCopy = ordersCopy.filter((item: { street: string; home: string }) => (item.street + ' ' + item.home).toLowerCase().indexOf(get().address.toLowerCase()) !== -1);
     }
 
-    set({
-      orders: ordersCopy,
-    });
+    set({orders: ordersCopy});
   },
 
+  // фильтр точек по городам
   filterPoints: (city_id) => {
     const pointsCopy = structuredClone(get().pointsCopy);
 
-    const points = pointsCopy.filter(
-      (item) => parseInt(item.city_id) == parseInt(city_id)
-    );
+    const points = pointsCopy.filter((item) => parseInt(item.city_id) == parseInt(city_id));
 
-    set({
-      points,
-    });
+    set({points});
   },
 
+  // выбор города
   changeCity: (event) => {
     const pointsCopy = structuredClone(get().pointsCopy);
 
-    const points = pointsCopy.filter(
-      (item) => parseInt(item.city_id) == parseInt(event.target.value)
-    );
+    const points = pointsCopy.filter((item) => parseInt(item.city_id) == parseInt(event.target.value));
 
     set({
       points,
@@ -79,52 +65,36 @@ export const useOrders = create<ordersState>((set, get) => ({
     get().setData();
   },
 
+  // поиск по адресу клиента
   changeAddress: (event) => {
-    set({
-      address: event.target.value,
-    });
+    set({address: event.target.value});
 
     get().filterOrders();
   },
 
+  // поиск по телефону клиента
   changeNumber: (event) => {
     const onlyNums = event.target.value.replace(/[^0-9]/g, '');
 
-    if (onlyNums.length < 11) {
-      set({
-        number: onlyNums,
-      });
-    }
+    if (onlyNums.length < 11) set({number: onlyNums});
 
     get().filterOrders();
   },
 
+  // изменение даты
   changeDate: (value) => {
-    set({
-      date: value ? formatDate(value) : '',
-    });
+    set({date: value ? formatDate(value) : ''});
 
     get().setData();
   },
 
+  // получение и сброс данных в таблице
   setData: (point_id, index) => {
-    set({
-      number: '',
-      address: '',
-      orders: [],
-    });
+    set({number: '', address: '', orders: []});
 
-    if (point_id) {
-      set({
-        pointId: point_id,
-      });
-    }
+    if (point_id) set({pointId: point_id});
 
-    if (index || index === 0) {
-      set({
-        indexTab: index,
-      });
-    }
+    if (index || index === 0) set({indexTab: index});
 
     const data = {
       point_id: point_id ?? get().pointId,
@@ -134,6 +104,7 @@ export const useOrders = create<ordersState>((set, get) => ({
     get().getOrders(data);
   },
 
+  // получение данных для Form
   getDataForm: async () => {
     set({ loading: true });
 
@@ -164,6 +135,7 @@ export const useOrders = create<ordersState>((set, get) => ({
     get().getOrders(obj);
   },
 
+  // получения заказок точки
   getOrders: async (obj) => {
     set({ loading: true });
 
@@ -182,7 +154,9 @@ export const useOrders = create<ordersState>((set, get) => ({
     });
   },
 
+  // получения заказа клиента
   getOrder: async (order_id) => {
+
     set({ loading: true });
 
     const data = {
@@ -200,6 +174,7 @@ export const useOrders = create<ordersState>((set, get) => ({
     });
   },
 
+  // закрытие заказа клиента
   closeOrder: async (obj) => {
     set({ loading: true });
 
