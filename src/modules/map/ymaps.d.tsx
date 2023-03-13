@@ -4944,4 +4944,5 @@ declare namespace ymaps {
   }
 }
 
-export default ymaps;
+///export default ymaps;
+export {}

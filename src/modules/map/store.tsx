@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { mapState } from './types';
 import { api } from '@/components/api';
-import ymaps from './ymaps.d';
+// import ymaps from './ymaps.d';
 
 export const useMap = create<mapState>((set, get) => ({
   loading: false,
