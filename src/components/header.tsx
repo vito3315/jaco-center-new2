@@ -40,9 +40,7 @@ export const Header = () => {
           <IconButton
             size="large"
             edge="start"
-            // color="#000"
             aria-label="menu"
-            // mr={2}
             onClick={() => toggleDrawer(true)}
           >
             <MenuIcon />

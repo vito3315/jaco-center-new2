@@ -20,7 +20,7 @@ import FormControl from '@mui/material/FormControl';
 export default function Close() {
   console.log('render Close');
 
-  const {showOrder, openClose, openAlert, status, text, closeOrder } = useOrders((state: ordersState) => state, shallow);
+  const [showOrder, openClose, openAlert, status, text, closeOrder] = useOrders((state: ordersState) => [state.showOrder, state.openClose, state.openAlert, state.status, state.text, state.closeOrder], shallow);
 
   const radiogroup_options = [
     { id: '0', label: 'Решили отредактировать заказ', value: 0 },
@@ -48,10 +48,18 @@ export default function Close() {
     setConfirm(true);
   };
 
+  const closeDialog = () => {
+    setType('-1');
+    setComment('');
+    useOrders.setState({ openClose: false });
+  }
+
   const close = () => {
     setConfirm(false);
+    setType('-1');
+    setComment('');
 
-    const deltype = radiogroup_options.find((item) => item.id === type);
+    const deltype: {id: string, label: string, value: number} = radiogroup_options.find((item) => item.id === type) ?? { id: '4', label: 'Другое', value: 0 };
 
     const data = {
       typeCreate: 'center',
@@ -79,20 +87,20 @@ export default function Close() {
         onClose={() => setConfirm(false)}
       >
         <DialogTitle align="center" sx={{ fontWeight: 'bold' }}>Подтвердите отмену заказа!</DialogTitle>
-        <DialogContent sx={{ fontWeight: 'bold', textAlign: 'center' }}>{`Отменить заказ # ${showOrder?.order.order_id} ?`}</DialogContent>
+        <DialogContent sx={{ fontWeight: 'bold', textAlign: 'center' }}>{`Отменить заказ # ${showOrder?.order?.order_id} ?`}</DialogContent>
         <DialogActions>
-          <Button style={{ color: '#00a550' }} onClick={() => setConfirm(false)}>Нет</Button>
+          <Button style={{ color: '#00a550' }} onClick={closeDialog}>Нет</Button>
           <Button onClick={close}>Да</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog
         open={openClose}
-        onClose={() => useOrders.setState({ openClose: false })}
+        onClose={closeDialog}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle style={{ textAlign: 'center' }}>Отмена заказа {showOrder?.order.order_id}</DialogTitle>
+        <DialogTitle style={{ textAlign: 'center' }}>Отмена заказа {showOrder?.order?.order_id}</DialogTitle>
         <DialogContent>
           <FormControl component="fieldset">
             <RadioGroup name="type" value={type} onChange={changeType}>
@@ -113,7 +121,7 @@ export default function Close() {
 
         <DialogActions style={{ paddingBottom: 24 }}>
           <ButtonGroup disableElevation={true} disableRipple={true} variant="contained" style={{ marginRight: 24 }}>
-            <Button variant="contained" onClick={() => useOrders.setState({ openClose: false })}>К заказу</Button>
+            <Button variant="contained" onClick={closeDialog}>К заказу</Button>
           </ButtonGroup>
 
           <ButtonGroup disableElevation={true} disableRipple={true} variant="contained" style={{ marginRight: 24 }}>

@@ -5,7 +5,6 @@ type Props = {
   value: string | number,
   index: string | number;
   children: React.ReactNode;
-  // All other props
   [x:string]: any;
 }
 

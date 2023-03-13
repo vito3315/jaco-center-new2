@@ -1,4 +1,5 @@
 import Head from 'next/head';
+import Script from 'next/script';
 import { Header } from '@/components/header';
 
 import Container from '@mui/material/Container';
@@ -34,6 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
               <meta name="viewport" content="width=device-width, initial-scale=1"/>
               <link rel="icon" href="/favicon.ico" />
             </Head>
+            <Script src="https://api-maps.yandex.ru/2.1/?apikey=ae2bad1f-486e-442b-a9f7-d84fff6296db&lang=ru_RU" />
             <Component {...pageProps} />
           </Container>
         </main>

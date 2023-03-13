@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ordersState } from './types';
+import { ordersState, orderRootObject } from './types';
 import { api } from '@/components/api';
 import { formatDate } from '@/lib';
 
@@ -18,7 +18,7 @@ export const useOrders = create<ordersState>((set, get) => ({
   cityId: '',
   indexTab: 0,
   date: formatDate(new Date()),
-  showOrder: null,
+  showOrder: {} as orderRootObject,
   openOrder: false,
   openClose: false,
   openAlert: false,
@@ -27,33 +27,34 @@ export const useOrders = create<ordersState>((set, get) => ({
 
   // фильтр для заказов в таблице по номеру или адресу клиента
   filterOrders: () => {
-    let ordersCopy = structuredClone(get().ordersCopy);
+    
+    let orders = get().ordersCopy;
 
     if (get().number.length > 0) {
-      ordersCopy = ordersCopy.filter((item: { number: string }) => item.number.indexOf(get().number) !== -1);
+      orders = orders.filter((item: { number: string }) => item.number.indexOf(get().number) !== -1);
     }
 
     if (get().address.length > 0) {
-      ordersCopy = ordersCopy.filter((item: { street: string; home: string }) => (item.street + ' ' + item.home).toLowerCase().indexOf(get().address.toLowerCase()) !== -1);
+      orders = orders.filter((item: { street: string; home: string }) => (item.street + ' ' + item.home).toLowerCase().indexOf(get().address.toLowerCase()) !== -1);
     }
 
-    set({orders: ordersCopy});
+    set({orders});
   },
 
   // фильтр точек по городам
   filterPoints: (city_id) => {
-    const pointsCopy = structuredClone(get().pointsCopy);
+    let points = get().pointsCopy;
 
-    const points = pointsCopy.filter((item) => parseInt(item.city_id) == parseInt(city_id));
+    points = points.filter((item: { city_id: string; }) => parseInt(item.city_id) == parseInt(city_id));
 
     set({points});
   },
 
   // выбор города
   changeCity: (event) => {
-    const pointsCopy = structuredClone(get().pointsCopy);
+    let points = get().pointsCopy;
 
-    const points = pointsCopy.filter((item) => parseInt(item.city_id) == parseInt(event.target.value));
+    points = points.filter((item: { city_id: string; }) => parseInt(item.city_id) == parseInt(event.target.value));
 
     set({
       points,

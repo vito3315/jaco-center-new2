@@ -28,18 +28,17 @@
         "name": "next"
       }
     ],
-    "strict": false
+    "strict": true,
+    "noImplicitAny": true
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/modules/map/map.tsx"
   ],
   "exclude": [
     "node_modules"
-  ],
-
-  "strict": true,
-  "noImplicitAny": true,
+  ]
 }

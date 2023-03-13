@@ -1,10 +1,15 @@
 import { memo } from "react";
+import { Order } from './types';
 import Ceil from './ceil';
 
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 
-function Row ({ item }) {
+type Props = {
+  item: Order;
+}
+
+function Row ({ item }: Props) {
   console.log('render Row');
 
   return (

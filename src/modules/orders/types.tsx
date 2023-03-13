@@ -199,6 +199,18 @@ export interface ordersState {
   number: string;
   address: string;
   date: Date | string;
+  orders: Order[];
+  ordersCopy: Order[];
+  order: Order | null;
+  pointId: number | string;
+  cityId: string;
+  indexTab: number;
+  showOrder: orderRootObject;
+  openOrder: boolean;
+  openClose: boolean;
+  openAlert: boolean;
+  status: boolean;
+  text: string;
   getDataForm: () => void;
   getOrders: (obj: {date: Date | string, point_id: number | string} ) => void;
   changeCity: (event: { target: { value: string } }) => void;
@@ -210,16 +222,4 @@ export interface ordersState {
   filterOrders: () => void;
   getOrder: (order_id: string | number) => void;
   closeOrder: (obj: {typeCreate: string, order_id: string, point_id: string, ans: string}) => void;
-  orders: Order[];
-  ordersCopy: Order[];
-  order: Order;
-  pointId: number | string;
-  cityId: string;
-  indexTab: number;
-  showOrder: orderRootObject;
-  openOrder: boolean;
-  openClose: boolean;
-  openAlert: boolean;
-  status: boolean;
-  text: string;
 }

@@ -14,8 +14,8 @@ import Tab from '@mui/material/Tab';
 export default function Form() {
   console.log('render Form');
 
-  const {cities, points, cityId, number, address, date, indexTab, 
-    changeCity, changeAddress, changeNumber, setData, changeDate, getDataForm} = useOrders((state: ordersState) => state, shallow);
+  const [cities, points, cityId, number, address, date, indexTab, 
+    changeCity, changeAddress, changeNumber, setData, changeDate, getDataForm] = useOrders((state: ordersState) => [state.cities, state.points, state.cityId, state.number, state.address, state.date, state.indexTab, state.changeCity, state.changeAddress, state.changeNumber, state.setData, state.changeDate, state.getDataForm], shallow);
 
   useEffect(() => {
     getDataForm();

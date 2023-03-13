@@ -1,11 +1,15 @@
 import { memo } from "react";
-
+import { Order } from './types';
 import { useOrders } from './store';
 import { ordersState } from './types';
 
 import TableCell from '@mui/material/TableCell';
 
-function Ceil ({ item }) {
+type Props = {
+  item: Order;
+}
+
+function Ceil ({ item }: Props) {
   console.log('render Ceil');
 
   const getOrder = useOrders((state: ordersState) => state.getOrder);
