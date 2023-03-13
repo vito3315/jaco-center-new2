@@ -29,7 +29,7 @@
       }
     ],
     "strict": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
   },
   "include": [
     "next-env.d.ts",
