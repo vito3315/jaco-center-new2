@@ -15,11 +15,6 @@ export const usePromo = create<promoState>((set, get) => ({
     if (onlyNums.length < 11) {
       set({ number: onlyNums });
     }
-
-    if (onlyNums.length === 11) {
-      const number = onlyNums.replace(/(\8)(\d{3})(\d{3})(\d{2})(\d{2})/gi, '$1 ($2) $3 $4-$5');
-      set({ number });
-    }
   },
 
   // получение информации о промо клиента
