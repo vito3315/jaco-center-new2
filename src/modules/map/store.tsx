@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { mapState } from './types';
 import { api } from '@/components/api';
-// import ymaps from './ymaps.d';
 
 export const useMap = create<mapState>((set, get) => ({
   loading: false,
@@ -85,7 +84,7 @@ export const useMap = create<mapState>((set, get) => ({
   // создание Map
   loadMap: () => {
     if (!get().map) {
-      ymaps.ready().then(() => {
+      ymaps.ready(function () {
         get().map = new ymaps.Map('ForMap', {
           center: [
             get().points[0]['xy_center_map']['latitude'],
@@ -145,3 +144,4 @@ export const useMap = create<mapState>((set, get) => ({
     }
   },
 }));
+

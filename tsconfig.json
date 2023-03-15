@@ -21,7 +21,7 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
     },
     "plugins": [
       {
@@ -29,14 +29,13 @@
       }
     ],
     "strict": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-    // "src/modules/map/map.tsx"
+    ".next/types/**/*.ts",
   ],
   "exclude": [
     "node_modules"
