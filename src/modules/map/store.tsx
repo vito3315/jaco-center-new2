@@ -84,7 +84,7 @@ export const useMap = create<mapState>((set, get) => ({
   // создание Map
   loadMap: () => {
     if (!get().map) {
-      ymaps.ready(function () {
+      ymaps.ready().then( () => {
         get().map = new ymaps.Map('ForMap', {
           center: [
             get().points[0]['xy_center_map']['latitude'],
