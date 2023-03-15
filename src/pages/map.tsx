@@ -1,3 +1,3 @@
-export default function MapPages() {
+export default function Map() {
   return <div>Карта</div>;
 }
