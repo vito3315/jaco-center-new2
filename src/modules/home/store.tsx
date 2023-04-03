@@ -183,23 +183,23 @@ export const useHome = create<homeState>((set, get) => ({
   // валидация/сохранение номер телефона
   saveNumber: (event) => {
     let number: string = event.target.value;
-    // let str: string[] = [];
+    let str: string[] = [];
 
     // number = number + '';
 
     if (number.length > 0) {
-      number = number.replace(/[()-+\s]/g, '');
-      // number = number.split(' ').join('');
-      // number = number.split('(').join('');
-      // number = number.split(')').join('');
-      // number = number.split('-').join('');
-      // number = number.split('+').join('');
+      // number = number.replace(/[()-+\s]/g, '');
+      number = number.split(' ').join('');
+      number = number.split('(').join('');
+      number = number.split(')').join('');
+      number = number.split('-').join('');
+      number = number.split('+').join('');
 
       if (number[0] == '7') {
-        number = number.replace('7', '8');
-        // str = number.split('');
-        // str[0] = '8';
-        // number = str.join('');
+        // number = number.replace('7', '8');
+        str = number.split('');
+        str[0] = '8';
+        number = str.join('');
       }
 
       if (number.length != 11) {
