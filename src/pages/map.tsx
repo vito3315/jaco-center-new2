@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 
-import { useMap, mapState } from "@/modules/map";
+import { useMap } from '@/modules/map/store';
+import { mapState } from '@/modules/map/types';
 import Loading from "@/components/loading";
 import Grid from '@mui/material/Grid';
 

@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEvent } from 'react';
+import { ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import TextField from '@mui/material/TextField';
 
 type TextInputProps = {
@@ -11,6 +11,7 @@ type TextInputProps = {
   multiline?: boolean;
   maxRows?: number;
   type?: string;
+  enter?: (event: KeyboardEvent<HTMLElement>) => void;
 }
 
 export const MyTextInput = (props: TextInputProps) => {
@@ -22,7 +23,6 @@ export const MyTextInput = (props: TextInputProps) => {
       value={props.value}
       onChange={props.func}
       onBlur={props.onBlur}
-      // onBlur={props.onBlur ? props.onBlur : null}
       disabled={props.disabled ? true : false}
       variant="outlined"
       size={'small'}
@@ -33,6 +33,7 @@ export const MyTextInput = (props: TextInputProps) => {
       maxRows={props.maxRows ? props.maxRows : 1}
       type={props.type ? props.type : type}
       style={{ width: '100%' }}
+      onKeyUp={props.enter}
     />
   );
 };

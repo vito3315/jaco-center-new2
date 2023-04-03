@@ -12,6 +12,7 @@ type MyAlertProps = {
   onClose: () => void;
   status?: boolean;
   text?: string;
+  location?: boolean;
 };
 
 export const MyAlert = (props: MyAlertProps) => {
@@ -19,7 +20,7 @@ export const MyAlert = (props: MyAlertProps) => {
     <Snackbar
       open={props.isOpen}
       autoHideDuration={30000}
-      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      anchorOrigin={props.location ? { vertical: 'top', horizontal: 'right' } : { vertical: 'top', horizontal: 'center' }}
       onClose={props.onClose}
     >
       <Alert

@@ -8,7 +8,7 @@ type Props = {
   [x:string]: any;
 }
 
-function TabPanel (props: Props) {
+export const TabPanel = (props: Props) => {
   const { children, value, index, ...other } = props;
 
   return (

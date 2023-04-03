@@ -15,3 +15,151 @@
   border-radius: 5px;
   padding: 16px;
 }
+
+.MuiTabs-flexContainer > .Mui-selected{
+  background-color: #6ab04c;
+  color: #fff!important;
+  font-weight: 600!important;
+}
+.MuiTabs-flexContainer > button:not(.Mui-selected){
+  font-weight: 600!important;
+  color: #525252!important;
+}
+.boxPic{
+  width: 100%;
+  background-color: #e5e5e5;
+  padding: 6px 12px!important;
+  margin-bottom: 10px!important;
+  cursor: pointer!important;
+  &:hover{
+    background-color: #6ab04c!important;
+    color: #fff!important;
+  }
+  &.active{
+    background-color: #6ab04c!important;
+    color: #fff!important;
+  }
+  & span:first-child{
+    text-align: center!important;
+  }
+  & span:last-child{
+    text-align: center!important;
+  }
+}
+.chooseDomTrue{
+    width: 100%;
+    & button.active{
+      background-color: #6ab04c;
+      color: #fff;
+    }
+    & button:not(.active){
+      background-color: #fff;
+      border: 1px solid #6ab04c;
+      color: #6ab04c;
+    }
+    & > button{
+      width: 50%;
+      border-color: #6ab04c!important;
+    }
+    & span{
+      font-size: 0.8rem!important;
+      width: 100%;
+      text-transform: none;
+      white-space: nowrap;
+    }
+    & .MuiButtonGroup-groupedContainedHorizontal:not(:last-child){
+      border-right: none
+    }
+}
+.checkClearFalse{
+  background-color: #6ab04c !important;
+  color: #fff!important;
+  margin: 10px!important;
+  width: calc(100% - 20px)!important;
+  border-radius: 10px!important;
+  & span{
+    font-weight: bolder;
+    text-align: center;
+  }
+}
+.checkClearTrue{
+  background-color: rgb(142, 0, 35) !important;
+  color: #fff!important;
+  margin: 10px!important;
+  width: calc(100% - 20px)!important;
+  border-radius: 10px!important;
+  & span{
+    font-weight: bolder;
+    text-align: center;
+  }
+}
+.DialogOrderCheckDialog{
+  position: relative;
+  & .DialogOrderCheckDialogTitle{
+    text-align: center;
+    padding-bottom: 0px;
+  }
+  & .closeDialog{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: rgb(142, 0, 35);
+  }
+  & .DialogOrderCheckDialogBody{
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    & .orderCheckText{
+      font-size: 1.2rem;
+      padding: 2px 0px;
+    }
+    
+  }
+  & .tableOrderCheck tbody tr td{
+    border-bottom: 1px solid #96969A;
+  }
+}
+
+table form > div.MuiTextField-root{
+  margin: 0!important;
+  padding: 0!important;
+}
+
+.root2{
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+  & > svg, form{
+    border-right: 0px!important
+  }
+}
+.root3{
+  & > *{
+    margin: 8px;
+    width: 50px;
+  }
+  & .MuiOutlinedInput-input{
+    padding: 5px 10px;
+  }
+}
+.paperCat{
+  padding: 0px;
+  text-align: center;
+  color: #000;
+  position: relative;
+  justify-content: space-between;
+  height: calc(100% - 15px);
+  cursor: pointer;
+}
+
+.bthCat{
+  margin-right: 24px!important;
+  height: 50%;
+  line-height: 1!important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

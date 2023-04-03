@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 
-import { useOrders, ordersState } from "@/modules/orders";
+import { useOrders } from "@/modules/orders/store";
+import { ordersState } from "@/modules/orders/types";
 import Loading from "@/components/loading";
 
 const Form = dynamic(() => import('@/modules/orders/form'));

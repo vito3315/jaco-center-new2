@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 
-import { useOrderCook, ordercookState } from "@/modules/ordercook";
+import { useOrderCook } from '@/modules/ordercook/store';
+import { ordercookState } from '@/modules/ordercook/types';
 import Loading from "@/components/loading";
 
 const Form = dynamic(() => import('@/modules/ordercook/form'));

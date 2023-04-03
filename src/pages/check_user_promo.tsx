@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 
-import { usePromo, promoState } from "@/modules/check_user_promo";
+import { usePromo } from '@/modules/check_user_promo/store';
+import { promoState } from '@/modules/check_user_promo/types';
 import Loading from "@/components/loading";
 import Grid from '@mui/material/Grid';
 

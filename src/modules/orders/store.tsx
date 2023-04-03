@@ -77,7 +77,7 @@ export const useOrders = create<ordersState>((set, get) => ({
   changeNumber: (event) => {
     const onlyNums = event.target.value.replace(/[^0-9]/g, '');
 
-    if (onlyNums.length < 11) set({number: onlyNums});
+    if (onlyNums.length < 12) set({number: onlyNums});
 
     get().filterOrders();
   },
@@ -116,7 +116,6 @@ export const useOrders = create<ordersState>((set, get) => ({
     const result = await api(data);
 
     set({
-      status: true,
       pointId: result.cities[0].id,
       cityId: result.cities[0].id,
       cities: result.cities,

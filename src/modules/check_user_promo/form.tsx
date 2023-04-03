@@ -24,7 +24,7 @@ export default function Form() {
         <MyTextInput label="Номер телефона" value={number} func={changeNumber} />
       </Grid>
       <Grid item xs={12} sm={3}>
-        <Button variant="contained" onClick={() => getPromoList()}>
+        <Button variant="contained" onClick={getPromoList}>
           Обновить
         </Button>
       </Grid>

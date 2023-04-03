@@ -1,6 +1,6 @@
 import { shallow } from 'zustand/shallow';
 import { usePromo } from './store';
-import { promoState } from './types';
+import { promoState, Promo_lk, Promo_sms } from './types';
 
 import Grid from '@mui/material/Grid';
 import Table from '@mui/material/Table';
@@ -33,7 +33,7 @@ export default function TableData() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {promos.map((item: {user_name: string, promo_name: string, date_bir: string, login: string, coment: string}, key: number) => (
+                {promos.map((item: Promo_lk, key: number) => (
                     <TableRow key={key}>
                       <TableCell style={{ color: 'inherit' }}>{item.login}</TableCell>
                       <TableCell style={{ color: 'inherit' }}>{item.user_name}</TableCell>
@@ -63,7 +63,7 @@ export default function TableData() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {promos_sms.map((item: {id: string, date_time: string, phone: string, text: string, type: string}, key: number) => (
+                {promos_sms.map((item: Promo_sms, key: number) => (
                     <TableRow key={key}>
                       <TableCell style={{ color: 'inherit' }}>{item.phone}</TableCell>
                       <TableCell style={{ color: 'inherit' }}>{item.text}</TableCell>

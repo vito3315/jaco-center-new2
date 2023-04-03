@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Script from 'next/script';
 import { Header } from '@/components/header';
+import { useRouter } from 'next/router';
 
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -22,12 +23,16 @@ const theme = createTheme({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+
+  const router = useRouter();
+  const showHeader = router.pathname === '/auth' ? false : true;
+
   return (
     <ThemeProvider theme={theme}>
       <div style={{ display: 'flex' }}>
         <main style={{ flexGrow: 1, overflow: 'auto' }}>
           <CssBaseline />
-          <Header />
+          {showHeader && <Header />}
           <Container maxWidth={false} style={{ paddingTop: 32, paddingBottom: 32, width: '100%' }}>
             <Head>
               <title>Create Next App</title>

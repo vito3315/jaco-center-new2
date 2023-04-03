@@ -1,4 +1,4 @@
 import { formatDate } from './FormateDate';
-import { a11yProps } from './TablePanel';
+import { a11yProps, TabPanel } from './TablePanel';
 
-export { formatDate, a11yProps };
+export { formatDate, a11yProps, TabPanel };
