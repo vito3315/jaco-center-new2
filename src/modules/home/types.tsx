@@ -122,7 +122,7 @@ export interface homeState {
   MyPromos: Promos[];
   loading: boolean;
   cityId: string;
-  promo_name: string | string[] | (string | string[])[] | null;
+  promo_name: any; // string | string[] | (string | string[])[] | null;
   orderPromoText: string;
   promoST: boolean;
   checkClear: boolean;
@@ -148,7 +148,7 @@ export interface homeState {
   timePred: []; // ??
   list_addr_choose: boolean;
   activeTab: number | string;
-  typeTime: number | string;
+  typeTime: any; // number | string;
   date: string;
   time: string;
   point_id: number | string;
@@ -200,22 +200,27 @@ export interface homeState {
   changeDomTrue: (type: boolean) => void;
   choosePic: (point: PicPointInfo, is_save: boolean) => void;
   chooseAddrFull: (addr: any, key: number) => void; // ??
-  changeTypeTime: (
-    event: { target: { value: string } } | null,
-    newValue?: number | string
-  ) => void;
+  // changeTypeTime: (
+  //   event: { target: { value: string } } | null,
+  //   newValue?: number | string
+  // ) => void;
+  changeTypeTime: (event: { target: { value: string } } | null, newValue?: any) => void;
   newOrder: any; // ??
+  startOrderIntervalTimer: any; // ??
+  startOrderInterval: any; // ??
   newOrderData: any; // ??
-  thisItem: string | null;
+  thisItem: string | string[] | (string | string[])[] | null;
   addItemCustom: (
     event: any,
     value: string | string[] | (string | string[])[] | null
   ) => void;
   addToCart: (item_id: number | string) => void;
   changeCat: (event: any, value: number | string) => void;
-  chooseAddrFunction: (addr: string | null) => void;
+  // chooseAddrFunction: (addr: string | null) => void;
+  chooseAddrFunction: (addr: any) => void;
   clear: () => void;
   trueOrder: () => void;
   checkLogin: () => void;
   closeAlert: () => void;
+  
 }

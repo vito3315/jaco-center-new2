@@ -66,6 +66,8 @@ export const useHome = create<homeState>((set, get) => ({
   ],
 
   newOrder: null,
+  startOrderIntervalTimer: null,
+  startOrderInterval: null,
 
   // выбор города
   changeCity: (event) => {
@@ -251,9 +253,9 @@ export const useHome = create<homeState>((set, get) => ({
   changeNumber: (event) => {
     const number = event.target.value;
 
-    if (isNaN(number)) {
-      return;
-    }
+    // if (isNaN(number)) {
+    //   return;
+    // }
 
     set({
       number,
@@ -1018,7 +1020,7 @@ export const useHome = create<homeState>((set, get) => ({
         // number: itemsStore.clientNumber
       };
 
-      // const json = await api(data);
+      const json = await api(data);
 
       setTimeout(() => {
         get().clickOrderStart = false;
@@ -1092,7 +1094,7 @@ export const useHome = create<homeState>((set, get) => ({
   addItemCustom: (event, value) => {
     // console.log("addItemCustom ====>", value);
 
-    const additem = get().allItems.find((item: AllItem) => item.name == value);
+    const additem: any = get().allItems.find((item: AllItem) => item.name == value);
 
     get().addToCart(additem.id);
 
