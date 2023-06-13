@@ -198,7 +198,7 @@ export interface ordersState {
   allItems: Array<{ id: string; name: string; price: string }>;
   number: string;
   address: string;
-  date: Date | string;
+  date: any;
   orders: Order[];
   ordersCopy: Order[];
   order: Order | null;

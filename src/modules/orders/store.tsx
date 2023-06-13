@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { ordersState, orderRootObject } from './types';
 import { api } from '@/components/api';
 import { formatDate } from '@/lib';
+import dayjs from 'dayjs';
 
 export const useOrders = create<ordersState>((set, get) => ({
   number: '',
@@ -75,20 +76,17 @@ export const useOrders = create<ordersState>((set, get) => ({
 
   // поиск по телефону клиента
   changeNumber: (event) => {
-    // const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+    const onlyNums = event.target.value.replace(/[^0-9]/g, '');
 
-    // if (onlyNums.length < 12) set({number: onlyNums});
-
-    const value = event.target.value;
-
-    set({number: value})
+    if (onlyNums.length < 12) set({number: onlyNums});
 
     get().filterOrders();
   },
 
   // изменение даты
   changeDate: (value) => {
-    set({date: value ? formatDate(value) : ''});
+
+    set({date: value ? dayjs(value) : ''});
 
     get().setData();
   },
@@ -145,7 +143,7 @@ export const useOrders = create<ordersState>((set, get) => ({
 
     const data = {
       type: 'get_orders',
-      date: obj.date,
+      date: dayjs(obj.date).format('YYYY-MM-DD'),
       point_id: obj.point_id,
     };
 

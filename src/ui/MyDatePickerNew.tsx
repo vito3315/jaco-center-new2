@@ -1,36 +1,26 @@
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import TextField from '@mui/material/TextField';
-
-import ruLocale from 'date-fns/locale/ru';
-
-import { formatDate } from '../lib';
+import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/ru';
 
 type DatePickerProps = {
   label?: string;
-  value: Date | string;
+  value: any;
   func: (value: string | Date | null) => void;
 }
 
 export const MyDatePickerNew = (props: DatePickerProps) => {
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ruLocale}>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
       <DatePicker
-        mask="____-__-__"
-        inputFormat="yyyy-MM-dd"
+        format="YYYY-MM-DD"
         label={props.label}
-        value={formatDate(props.value)}
+        value={props.value}
         onChange={props.func}
-        renderInput={(params) => (
-          <TextField
-            variant="outlined"
-            size={'small'}
-            color="primary"
-            style={{ width: '100%' }}
-            {...params}
-          />
-        )}
+        slotProps={{
+          textField: { size: "small" }
+        }}
+        className={'datePicker'}
       />
     </LocalizationProvider>
   );

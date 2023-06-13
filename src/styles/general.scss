@@ -163,3 +163,10 @@ table form > div.MuiTextField-root{
   justify-content: center;
   align-items: center;
 }
+
+.datePicker{
+  width: 100%;
+  & div.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.MuiInputBase-formControl.MuiInputBase-adornedEnd{
+      height: 40px;
+  }
+}
