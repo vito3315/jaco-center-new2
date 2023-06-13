@@ -31,8 +31,8 @@ export const useHome = create<homeState>((set, get) => ({
   thisItem: null,
   textAvgTime: 'Среднее время: ~',
   orderPic: 0,
-  sumDiv: 0,
-  AllPrice: 0,
+  sumDiv: '',
+  AllPrice: '',
   activeCat: 0,
   picPointInfo: null,
   clientAddr: [],
@@ -718,7 +718,7 @@ export const useHome = create<homeState>((set, get) => ({
       activeTab: 1,
 
       point_id: point.id,
-      sumDiv: 0,
+      sumDiv: '0',
     });
 
     if (is_save === true) {

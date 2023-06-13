@@ -156,8 +156,8 @@ export interface homeState {
   newAddrInfo: string | null;
   picPointInfo: PicPointInfo | null;
   chooseAddr: number | null;
-  sumDiv: number | string;
-  AllPrice: number | string;
+  sumDiv: string;
+  AllPrice: string;
   activeCat: number | string;
   newAddrStreet: string | string[] | (string | string[])[] | null;
   pd: string;
