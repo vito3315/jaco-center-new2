@@ -75,9 +75,13 @@ export const useOrders = create<ordersState>((set, get) => ({
 
   // поиск по телефону клиента
   changeNumber: (event) => {
-    const onlyNums = event.target.value.replace(/[^0-9]/g, '');
+    // const onlyNums = event.target.value.replace(/[^0-9]/g, '');
 
-    if (onlyNums.length < 12) set({number: onlyNums});
+    // if (onlyNums.length < 12) set({number: onlyNums});
+
+    const value = event.target.value;
+
+    set({number: value})
 
     get().filterOrders();
   },
