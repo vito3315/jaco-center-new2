@@ -14,38 +14,14 @@ import AppBar from '@mui/material/AppBar';
 export default function Time() {
   console.log('render Time');
 
-  const [
-    typeTime,
-    changeTypeTime,
-    textAvgTime,
-    date_pred,
-    timePred,
-    date,
-    time,
-    changeTime,
-    changeDate,
-  ] = useHome(
-    (state: homeState) => [
-      state.typeTime,
-      state.changeTypeTime,
-      state.textAvgTime,
-      state.date_pred,
-      state.timePred,
-      state.date,
-      state.time,
-      state.changeTime,
-      state.changeDate,
-    ],
-    shallow
-  );
+  const [typeTime, changeTypeTime, textAvgTime, date_pred, timePred, date, time, changeTime, changeDate] = useHome((state: homeState) => 
+    [state.typeTime, state.changeTypeTime, state.textAvgTime, state.date_pred, state.timePred, state.date, state.time, state.changeTime, state.changeDate], shallow);
 
   return (
     <Grid container spacing={2} marginTop={0}>
     <Grid item xs={12}>
       <AppBar position="static" style={{ backgroundColor: '#fff', borderRadius: 12, overflow: 'hidden' }}>
-        <Tabs value={typeTime} 
-        // onChange={(event) => changeTypeTime(event)} ?? какое newValue ??
-        indicatorColor="secondary" variant="fullWidth" style={{ height: 40, minHeight: 40 }}>
+        <Tabs value={typeTime}  onChange={changeTypeTime} indicatorColor="secondary" variant="fullWidth" style={{ height: 40, minHeight: 40 }}>
           
           <Tab label={'По текущему'} style={{ minWidth: 'auto', height: 40, minHeight: 40 }} {...a11yProps(0)} />
           <Tab label={'Ко времени'} style={{ minWidth: 'auto', height: 40, minHeight: 40 }} {...a11yProps(1)} />

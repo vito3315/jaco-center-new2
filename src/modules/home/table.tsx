@@ -1,5 +1,9 @@
-import { useEffect, useState } from 'react';
-import Row from './row';
+import { shallow } from 'zustand/shallow';
+
+import { useHome } from './store';
+import { homeState, CatItem } from './types';
+
+import { Row } from './row';
 
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -13,11 +17,11 @@ import TableContainer from '@mui/material/TableContainer';
 export default function TableData() {
   console.log('render Table');
 
-  const [mainItems, setMainItems] = useState([]);
-  const [dopItems, setDopItems] = useState([]);
-  const [promoItems, setPromoItems] = useState([]);
+  // const [mainItems, setMainItems] = useState([]);
+  // const [dopItems, setDopItems] = useState([]);
+  // const [promoItems, setPromoItems] = useState([]);
 
-  const autorun = () => {
+  //const autorun = () => {
     // if( this._isMounted ){
     //   let my_cart = itemsStore.getItems();
     //   let all_items = itemsStore.getAllItems();
@@ -57,11 +61,9 @@ export default function TableData() {
     // setPromoItems(cartPromoItems);
     //   }
     // }
-  };
+  // };
 
-  useEffect(() => {
-    autorun();
-  }, []);
+  const [mainItems] = useHome((state: homeState) => [state.mainItems], shallow);
 
   return (
     <Grid item xs={8} style={{ paddingTop: 5 }}>
@@ -78,17 +80,17 @@ export default function TableData() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {mainItems.map((item, key) => (
+              {mainItems.map((item: CatItem, key: number) => (
                 <Row key={key} item={item} type="main" />
               ))}
 
-              {dopItems.map((item, key) => (
+              {/* {dopItems.map((item, key) => (
                 <Row key={key} item={item} type="dop" />
               ))}
 
               {promoItems.map((item, key) => (
                 <Row key={key} item={item} type="promo" />
-              ))}
+              ))} */}
             </TableBody>
           </Table>
         </TableContainer>

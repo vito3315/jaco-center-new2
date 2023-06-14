@@ -1,4 +1,7 @@
-import { useEffect } from 'react';
+import { shallow } from 'zustand/shallow';
+
+import { useHome } from './store';
+import { homeState, CatItem } from './types';
 
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -8,50 +11,15 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import CloseIcon from '@mui/icons-material/Close';
 
-export default function Row({ item, type }: any) {
+type RowProps = {
+  type: string;
+  item: CatItem;
+}
+
+export const Row = ({ item, type }: RowProps) => {
   console.log('render Row');
 
-  const autorun = () => {
-    // if( this._isMounted === true && this.state.item ){
-    //   let my_cart = itemsStore.getItems();
-    //   let promoItems = itemsStore.getItemsPromo();
-    //   let this_item = my_cart.find( (item) => item.item_id == this.state.item.id );
-    //   if( !this_item ){
-    //     this_item = my_cart.find( (item) => item.item_id == this.state.item.item_id );
-    //   }
-    //   if( !this_item ){
-    //     this_item = promoItems.find( (item) => item.item_id == this.state.item.id );
-    //   }
-    // item: this_item
-    // }
-  };
-
-  useEffect(() => {
-    autorun();
-  }, []);
-
-  const delItem = (item_id: any) => {
-    // itemsStore.delItem(item_id)
-  };
-
-  const changeCount = (el: any) => {
-    // let count = el.target.value,
-    //     item_id = this.state.item.item_id;
-    // if( count.length > 0 ){
-    //   itemsStore.AddCountItem(item_id, count)
-    //   this.lastType = this.state.type;
-    // }
-  };
-
-  const add = () => {
-    // itemsStore.AddItem(this.state.item.item_id);
-    // this.lastType = this.state.type;
-  };
-
-  const minus = () => {
-    // itemsStore.MinusItem(this.state.item.item_id);
-    // this.lastType = this.state.type;
-  };
+  const [addToCart, minusToCart, delToCart, changeCount] = useHome((state: homeState) => [state.addToCart, state.minusToCart, state.delToCart, state.changeCount], shallow);
 
   return (
     <TableRow hover style={item && item.count == 0 ? { display: 'none' } : {}}>
@@ -66,15 +34,15 @@ export default function Row({ item, type }: any) {
           </Typography>
         ) : (
           <div className={'root2'}>
-            <RemoveIcon onClick={minus} style={{ cursor: 'pointer' }} />
+            <RemoveIcon onClick={() => minusToCart(item.id)} style={{ cursor: 'pointer' }} />
             <form className={'root3'} noValidate autoComplete="off">
               <TextField
                 variant="outlined"
-                onChange={changeCount}
+                onChange={(event) => changeCount(event, item.id)}
                 value={item.count}
               />
             </form>
-            <AddIcon onClick={add} style={{ cursor: 'pointer' }} />
+            <AddIcon onClick={() => addToCart(item.id)} style={{ cursor: 'pointer' }} />
           </div>
         )}
       </TableCell>
@@ -89,7 +57,7 @@ export default function Row({ item, type }: any) {
         {type !== 'promo' ? (
           <CloseIcon
             style={{ cursor: 'pointer', marginTop: 5 }}
-            onClick={() => delItem(item.item_id)}
+            onClick={() => delToCart(item.id)}
           />
         ) : null}
       </TableCell>

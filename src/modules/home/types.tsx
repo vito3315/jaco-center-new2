@@ -21,6 +21,10 @@ export interface Cat {
 }
 
 export interface CatItem {
+  one_price: any;
+  new_one_price: any;
+  all_price: number;
+  count: any;
   id: string;
   name: string;
   tmp_desc: string;
@@ -50,6 +54,8 @@ export interface CatItem2 {
 }
 
 export interface AllItem {
+  all_price: any;
+  count: any;
   id: string;
   name: string;
   tmp_desc: string;
@@ -165,10 +171,13 @@ export interface homeState {
   kv: string;
   comment: string;
   sdacha: string;
-  textAvgTime: string;
+  // textAvgTime: string;
+  textAvgTime: any; // временно пока не работает функция loadTimeWait();
   openAlert: boolean;
   status: boolean;
   text: string;
+  // mainItems: AllItem[];
+  mainItems: any;
   getDataForm: () => void;
   getAddr: () => void;
   saveData: () => void;
@@ -204,7 +213,7 @@ export interface homeState {
   //   event: { target: { value: string } } | null,
   //   newValue?: number | string
   // ) => void;
-  changeTypeTime: (event: { target: { value: string } } | null, newValue?: any) => void;
+  changeTypeTime: (event: any, newValue?: any) => void;
   newOrder: any; // ??
   startOrderIntervalTimer: any; // ??
   startOrderInterval: any; // ??
@@ -215,6 +224,9 @@ export interface homeState {
     value: string | string[] | (string | string[])[] | null
   ) => void;
   addToCart: (item_id: number | string) => void;
+  minusToCart: (item_id: number | string) => void;
+  delToCart: (item_id: number | string) => void;
+  changeCount: (event: any, item_id: number | string) => void;
   changeCat: (event: any, value: number | string) => void;
   // chooseAddrFunction: (addr: string | null) => void;
   chooseAddrFunction: (addr: any) => void;

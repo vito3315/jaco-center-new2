@@ -23,9 +23,7 @@ export default function MyToolTip({ tmp_desc, info_weight }: Props) {
             disableFocusListener
             disableHoverListener
             disableTouchListener
-            PopperProps={{
-              disablePortal: true,
-            }}
+            PopperProps={{ disablePortal: true }}
             onClose={() => setOpen(false)}
             open={open}
             placement="top"
@@ -45,9 +43,7 @@ export default function MyToolTip({ tmp_desc, info_weight }: Props) {
           disableFocusListener
           disableHoverListener
           disableTouchListener
-          PopperProps={{
-            disablePortal: true,
-          }}
+          PopperProps={{ disablePortal: true }}
           onClose={() => setOpen(false)}
           open={open}
           placement="top"

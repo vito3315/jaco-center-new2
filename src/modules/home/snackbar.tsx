@@ -14,7 +14,7 @@ export default function SnackBar() {
   return (
     <MyAlert
       isOpen={openAlert}
-      onClose={closeAlert}
+      onClose={(closeAlert)}
       status={status}
       text={text}
       location={true}

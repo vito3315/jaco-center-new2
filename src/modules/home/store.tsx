@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { homeState, AllItem } from './types';
+import { homeState, AllItem, CatItem } from './types';
 import { api } from '@/components/api';
 import moment from 'moment';
 
@@ -38,13 +38,13 @@ export const useHome = create<homeState>((set, get) => ({
   clientAddr: [],
   activeTab: 0,
   date: '', //дата предзаказа
-  time: '', //дата предзаказа
+  time: '', //время предзаказа
   typeTime: 0, // 0 - быстрее / 1 - пред
   pic_point: [],
   all_addr: [],
   date_pred: [],
   list_addr_for_choose: [],
-  timePred: [], 
+  timePred: [],
   orderCheck: false,
   list_addr_choose: false,
   clickOrderStart: false,
@@ -69,25 +69,20 @@ export const useHome = create<homeState>((set, get) => ({
   startOrderIntervalTimer: null,
   startOrderInterval: null,
 
+  mainItems: [],
+
   // выбор города
   changeCity: (event) => {
     set({ cityId: event.target.value });
 
-    // localStorage.setItem('cityID', event.target.value)
-
     get().getDataForm();
-
-    // setTimeout( ()=>{
-
-    //   setTimeout( () => {
-    //     itemsStore.reChangePrice();
-    //   }, 300 )
-    // }, 300 )
   },
 
   // данные для Form
   getDataForm: async () => {
     set({ loading: true });
+
+    let mainItems = get().mainItems;
 
     let data = {
       type: 'get_cat_center_new',
@@ -95,8 +90,6 @@ export const useHome = create<homeState>((set, get) => ({
     };
 
     let res = await api(data);
-
-    // let items = itemsStore.getItems();
 
     // console.log('getDataForm====>', res);
 
@@ -107,23 +100,25 @@ export const useHome = create<homeState>((set, get) => ({
       allItems: res.all_items,
     });
 
-    // itemsStore.setAllItemsCat(res.arr);
-    // itemsStore.setAllItems(res.all_items);
-    // itemsStore.setFreeItems(res.free_items);
+    let allItems = get().allItems;
 
-    // items.map( (item, key) => {
-    //   res.all_items.map( (it) => {
-    //     if( parseInt( item.item_id ) == parseInt( it.id ) ){
-    //       items[ key ]['one_price'] = parseInt(it.price);
-    //       items[ key ]['all_price'] = parseInt(it.price) * parseInt(item.count);
-    //     }
-    //   } )
-    // });
+    mainItems = mainItems.map((item: CatItem) => {
+      allItems.map((it) => {
+        if (parseInt(item.id) == parseInt(it.id)) {
+          item.price = it.price;
+          item.all_price = parseInt(it.price) * parseInt(item.count);
+        }
+        return it;
+      });
+      return item;
+    });
+
+    const AllPrice = mainItems.reduce((all: any, it: { all_price: any; }) => all + Number(it.all_price), 0); // без суммы доставки
 
     data = {
       type: 'get_by_mi_new',
-      city_id: get().cityId, // itemsStore.getCity(),
-      // user_id: itemsStore.getToken()
+      city_id: get().cityId,
+      // user_id: itemsStore.getToken() // нужен будет здесь токен?
     };
 
     res = await api(data);
@@ -134,13 +129,11 @@ export const useHome = create<homeState>((set, get) => ({
       pic_point: res.get_addr_pic.points,
       all_addr: res.get_addr,
       date_pred: res.date_pred,
+      mainItems,
+      AllPrice,
     });
 
-    // setTimeout( () => {
-
-    get().loadSavedData();
-    // itemsStore.setItems(items);
-    // }, 300 )
+    get().loadSavedData(); /// что делает эта функция?
   },
 
   // проверка промика
@@ -187,10 +180,7 @@ export const useHome = create<homeState>((set, get) => ({
     let number: string = event.target.value;
     let str: string[] = [];
 
-    // number = number + '';
-
     if (number.length > 0) {
-      // number = number.replace(/[()-+\s]/g, '');
       number = number.split(' ').join('');
       number = number.split('(').join('');
       number = number.split(')').join('');
@@ -198,7 +188,6 @@ export const useHome = create<homeState>((set, get) => ({
       number = number.split('+').join('');
 
       if (number[0] == '7') {
-        // number = number.replace('7', '8');
         str = number.split('');
         str[0] = '8';
         number = str.join('');
@@ -214,52 +203,35 @@ export const useHome = create<homeState>((set, get) => ({
       }
     }
 
-    set({
-      number,
-    });
+    set({ number });
 
-    // itemsStore.clientNumber = number;
-    // localStorage.setItem('clientNumber', number);
-
-    if (number.length == 0) {
-      set({
-        clientAddr: [],
-      });
+    if (!number.length) {
+      set({ clientAddr: [] });
     } else {
-      // setTimeout(() => {
-      get().getAddr();
-      // }, 300);
+      get().getAddr(); // установка адресов клиента по номеру телефона во вкладке Адрес клиента
     }
   },
 
-  // получить адрес клиента
+  // получение адресов клиента по введенному номеру телефона
   getAddr: async () => {
     const data = {
       type: 'get_user_addrs',
       city_id: get().cityId,
-      login: get().number
-    }
+      login: get().number,
+    };
 
     const res = await api(data);
 
-    console.log('getAddr ===>', res)
+    console.log('getAddr ===>', res);
 
-    set({
-      clientAddr: res
-    })
+    set({ clientAddr: res });
   },
 
-  // изменение номера телефона
+  // введение/изменение номера телефона
   changeNumber: (event) => {
     const number = event.target.value;
 
-    // if (isNaN(number)) {
-    //   return;
-    // }
-
-    set({
-      number,
-    });
+    set({ number });
   },
 
   // переключение таба доставка/самовывоз/адрес клиента
@@ -289,292 +261,52 @@ export const useHome = create<homeState>((set, get) => ({
     //   }
     // }
 
-    set({
-      activeTab: newValue,
-    });
+    set({ activeTab: newValue });
 
-    get().saveData();
+    get().saveData(); // что делает эта функция ?
 
     setTimeout(() => {
       if (parseInt(get().typeTime) == 0) {
-        get().loadTimeWait();
+        get().loadTimeWait(); // устанавливает время ожидания заказа ?
       } else {
-        get().loadTimePred();
+        get().loadTimePred(); // что делает эта функция ?
       }
 
       if (get().promo_name.length > 0) {
-        get().checkPromo({ target: { value: get().promo_name } });
+        get().checkPromo({ target: { value: get().promo_name } }); // проверяет промик указанный клиентом ?
       }
     }, 300);
   },
 
-  //
-  saveData: () => {
-    // let cartData = itemsStore.getCartData();
-    
-    // setTimeout(()=>{
-    //   let data = {
-    //     orderType: parseInt(this.state.activeTab) == 0 || parseInt(this.state.activeTab) == 1 ? parseInt(this.state.activeTab) : 0,
-    //     orderAddr: cartData && cartData.orderAddr ? cartData.orderAddr : '',
-        
-    //     orderPic: this.state.orderPic,
-    //     orderComment: this.state.comment,
-        
-    //     orderTimes: this.state.typeTime,
-    //     orderPredDay: this.state.date,
-    //     orderPredTime: this.state.time,
-        
-    //     orderPay: cartData && cartData.orderPay ? cartData.orderPay : '0',
-    //     orderSdacha: this.state.sdacha,
-    //   };
-      
-    //   itemsStore.saveCartData(data);
-    // }, 100)
-  },
-
-  //
-  loadTimeWait:  async () => {
-    // let items = JSON.stringify( itemsStore.getItems() );
-
-    /*if( items == this.loadTimeCheck ){
-      return ;
-    }
-
-    this.loadTimeCheck = items;*/
-
-    // let cartData = itemsStore.getCartData();
-    
-    const data = {
-      types: 'load_time_wait_test',
-      // point_id: cartData.orderType+1 == 1 ? cartData.orderAddr.point_id ?? 0 : cartData.orderPic ?? 0,
-      // type_order: cartData.orderType,
-      city_id: get().cityId,
-      
-      // cart: JSON.stringify( itemsStore.getItems() ),
-      // cartPromo: JSON.stringify( itemsStore.getItemsPromo() )
-    }
-
-    const res = await api(data);
-
-    set({
-      textAvgTime: res['text']
-    })
-  },
-
-  //
-  loadTimePred: async () => {
-    // let my_cart = [];
-    // let cartItems = itemsStore.getItems();  
-    // let cartData = itemsStore.getCartData();
-    
-    // cartItems.forEach(el => {
-    //     my_cart.push({
-    //         item_id: el.item_id,
-    //         count: el.count,
-    //     });
-    // });
-    
-    const data = {
-      type: 'get_times_pred_center',
-      // point_id: cartData.orderType+1 == 1 ? cartData.orderAddr.point_id ?? 0 : cartData.orderPic ?? 0,
-      // type_order: cartData.orderType+1,
-      date: get().date,
-      // cart: JSON.stringify( my_cart ),
-    }
-
-    const res = await api(data);
-
-    if(!res.st){
-      /*this.setState({
-          error: {
-              title: 'Предупреждение', 
-              text: json.text
-          },
-          errorOpen: true
-      })*/
-    }else{
-      set({
-        timePred: res.data
-      })
-    }
-  },
-
-  //
-  saveDataOther: () => {
-    // let cartData = itemsStore.getCartData();
-    
-    // let addrInfo = this.state.newAddrInfo ? this.state.newAddrInfo : cartData.orderAddr;
-    
-    // setTimeout(()=>{
-    //     let data = {
-    //         orderType: parseInt(this.state.activeTab) == 0 || parseInt(this.state.activeTab) == 1 ? parseInt(this.state.activeTab) : 0,
-    //         orderAddr: {
-    //           id: -1,
-    //           //city_name: itemsStore.getCityRU(),
-    //           street: this.state.newAddrInfo && addrInfo.street ? addrInfo.street : '',
-    //           home: addrInfo.home ? addrInfo.home : '',
-    //           kv: this.state.kv,
-    //           pd: this.state.pd,
-    //           et: this.state.et,
-    //           dom_true: this.state.newAddrDom ? 1 : 0,
-    //           free_drive: addrInfo.free_drive ? addrInfo.free_drive : 0,
-    //           sum_div: addrInfo.sum_div ? addrInfo.sum_div : 0,
-    //           point_id: addrInfo.point_id ? addrInfo.point_id : 0,
-    //           xy: addrInfo.xy ? addrInfo.xy : '',
-    //           pay_active: addrInfo.pay_active ? addrInfo.pay_active : 0,
-    //         },
-            
-    //       orderPic: this.state.orderPic,
-    //       orderComment: this.state.comment,
-          
-    //       orderTimes: this.state.typeTime,
-    //       orderPredDay: this.state.date,
-    //       orderPredTime: this.state.time,
-          
-    //       orderPay: cartData && cartData.orderPay ? cartData.orderPay : '0',
-    //       orderSdacha: this.state.sdacha,
-    //     };
-        
-    //     itemsStore.saveCartData(data);
-    // }, 100)
-  },
-
-  // 
-  loadSavedData: () => {
-    // let cartData = itemsStore.getCartData();
-
-    // if( cartData && cartData.orderType && parseInt(cartData.orderType) == 1 ){
-    //   let my_point = this.state.pic_point.find( (item) => item.id == parseInt(cartData.orderPic) );
-      
-    //   if( my_point ){
-    //     this.choosePic(my_point, false);
-    //   }
-    // }
-
-    // if( cartData && parseInt(cartData.orderType) == 0 ){
-
-    //   this.setState({
-    //     newAddrInfo: cartData.orderAddr ? cartData.orderAddr : null,
-    //     point_id: cartData.orderAddr ? cartData.orderAddr.point_id : 0,
-
-    //     newAddrStreet: cartData.orderAddr && cartData.orderAddr.street,
-
-    //     newAddrHome: cartData.orderAddr && cartData.orderAddr.home ? cartData.orderAddr.home : '',
-    //     pd: cartData.orderAddr && cartData.orderAddr.pd ? cartData.orderAddr.pd : '',
-    //     et: cartData.orderAddr && cartData.orderAddr.et ? cartData.orderAddr.et : '',
-    //     kv: cartData.orderAddr && cartData.orderAddr.kv ? cartData.orderAddr.kv : '',
-    //     newAddrDom: cartData.orderAddr && parseInt(cartData.orderAddr.dom_true) == 0 ? false : true,
-
-    //     activeTab: 0
-    //   })
-      
-    //   let allPrice = itemsStore.getAllPrice();
-        
-    //   if( parseInt(cartData.orderAddr ? cartData.orderAddr.free_drive : 0) == 1 || parseInt(itemsStore.free_drive) == 1 ){
-    //     if( parseInt(allPrice) > 0 ){
-    //         itemsStore.setSumDiv(0);
-    //     }else{
-    //       itemsStore.setSumDiv(1);
-    //     }
-    //   }else{
-    //     itemsStore.setSumDiv(parseInt(cartData.orderAddr ? cartData.orderAddr.sum_div : 0));
-    //   }
-    // }
-    
-    // if( cartData && cartData.orderComment != this.state.comment ){
-    //   this.setState({
-    //     comment: cartData.orderComment
-    //   })
-    // }
-    
-    // if( cartData && cartData.orderSdacha && parseInt(cartData.orderSdacha) != parseInt(this.state.sdacha) ){
-    //   this.setState({
-    //     sdacha: cartData.orderSdacha 
-    //   })
-    // }
-
-    // if( localStorage.getItem('clientNumber') ){
-    //   let defValue = localStorage.getItem('clientNumber');
-    //   itemsStore.clientNumber = defValue;
-      
-    //   this.setState({
-    //     number: defValue,
-    //   })
-
-    //   setTimeout( () => {
-    //     this.getAddr();
-    //   }, 300 )
-    // }
-
-    // if( localStorage.getItem('promo_name') ){
-    //   let promo = localStorage.getItem('promo_name');
-      
-    //   setTimeout( ()=>{
-    //     this.setState({
-    //       promo_name: promo
-    //     })
-        
-    //     this.checkPromo( {target: {value: promo}} )
-    //   }, 500 )
-      
-    // }
-
-    // if( parseInt(this.state.typeTime) != parseInt(cartData.orderTimes) ){
-    //   this.setState({
-    //     typeTime: cartData.orderTimes
-    //   })
-      
-    //   this.setState({
-    //     time: cartData.orderPredTime,
-    //     date: cartData.orderPredDay,
-    //     typeTime: cartData.orderTimes,
-    //   })
-      
-    //   if( cartData.orderType == 0 ){
-    //     if( parseInt(cartData.orderTimes) == 1 ){
-    //       this.loadTimePred();
-    //     }else{
-    //       this.loadTimeWait();
-    //     }
-    //   }
-      
-    //   if( parseInt(cartData.orderTimes) == 1 ){
-    //     this.loadTimePred();
-    //   }else{
-    //     this.loadTimeWait();
-    //   }
-    // }
-  },
-
-  // проверка нового адреса клиента
+  // проверка адреса клиента введенного для доставки
   checkNewAddr: async (is_check) => {
-    
     setTimeout(() => {
       get().clickOrderStart = true;
     }, 10);
-    
-    set({
-      check_home_true: true,
-    });
-    
+
+    set({ check_home_true: true });
+
     const street = (document.querySelector('#newAddrStreet') as HTMLInputElement).value;
 
+    //console.log('checkNewAddr street===>', street) 
+
     if (street.length > 0 && get().newAddrHome.length > 0) {
+
       const data = {
         type: 'check_addr',
         city_id: get().cityId,
-        street: street,
-        home: get().newAddrHome,
+        street,
+        home: get().newAddrHome, // номер дома указанный в доставке
         //user_id: itemsStore.getToken()
       };
 
       const res = await api(data);
 
+      console.log('checkNewAddr ===>', res);
+
       if (parseInt(res.count) == 0) {
         if (is_check === true) {
           set({
-            // openErr: true,
-            // msgText: 'Адрес не найден, или не входит в зону доставки',
             openAlert: true,
             status: false,
             text: 'Адрес не найден, или не входит в зону доставки',
@@ -588,9 +320,9 @@ export const useHome = create<homeState>((set, get) => ({
         });
 
         setTimeout(() => {
-          get().saveDataOther();
+          get().saveDataOther(); // что делает эта функция ?
 
-          get().clickOrderStart = false;
+          get().clickOrderStart = false; // устанавливает что заказ не надо оформлять
         }, 100);
 
         return;
@@ -604,7 +336,7 @@ export const useHome = create<homeState>((set, get) => ({
         });
 
         setTimeout(() => {
-          get().clickOrderStart = false;
+          get().clickOrderStart = false; 
         }, 100);
       }
 
@@ -617,6 +349,8 @@ export const useHome = create<homeState>((set, get) => ({
           openAlert: false,
         });
 
+
+        // установление суммы доставка заказа ?
         // let allPrice = itemsStore.getAllPrice();
 
         // if( parseInt(res.addrs.free_drive) == 1 || parseInt(itemsStore.free_drive) == 1 ){
@@ -630,19 +364,19 @@ export const useHome = create<homeState>((set, get) => ({
         // }
 
         setTimeout(() => {
-          get().saveDataOther();
+          get().saveDataOther(); // что делает эта функция?
 
           setTimeout(() => {
             if (parseInt(get().typeTime) == 0) {
-              get().loadTimeWait();
+              get().loadTimeWait(); // эта функция устанавливает время ожидания?
             } else {
-              get().loadTimePred();
+              get().loadTimePred(); // что делает эта функция?
             }
 
-            get().clickOrderStart = false;
+            get().clickOrderStart = false; // устанавливает состояния необходимости проверки адреса клиента?
 
             if (get().promo_name.length > 0) {
-              get().checkPromo({ target: { value: get().promo_name } });
+              get().checkPromo({ target: { value: get().promo_name } }); // проверка промика клиента?
             }
           }, 300);
         }, 100);
@@ -654,14 +388,14 @@ export const useHome = create<homeState>((set, get) => ({
       });
 
       setTimeout(() => {
-        get().saveDataOther();
+        get().saveDataOther(); // что делает эта функция?
 
         get().clickOrderStart = false;
       }, 300);
     }
   },
 
-  //
+  // введение/изменение адреса клиента для доставки
   changeAddrCustom: (event, value) => {
     set({ newAddrStreet: value });
   },
@@ -702,14 +436,12 @@ export const useHome = create<homeState>((set, get) => ({
       newAddrDom: type,
     });
 
-    // dom_true нет в state ??
-    // this.changeDataOther('dom_true', {target: {value: type ? 1 : 0}})
+    // this.changeDataOther('dom_true', {target: {value: type ? 1 : 0}})  // эта функция необходима ? dom_true нет в state ??
   },
 
   // в самовывозе выбор адреса точки
   choosePic: (point, is_save = true) => {
-
-    // console.log('choosePic ===>', point);
+    console.log('choosePic ===>', point);
 
     set({
       orderPic: point.id,
@@ -722,25 +454,25 @@ export const useHome = create<homeState>((set, get) => ({
     });
 
     if (is_save === true) {
-      get().saveData();
+      get().saveData(); // что делает эта функция ?
     }
 
     setTimeout(() => {
       if (get().promo_name.length > 0) {
-        get().checkPromo({ target: { value: get().promo_name } });
+        get().checkPromo({ target: { value: get().promo_name } }); // проверяет промик клиента
       }
 
       if (parseInt(get().typeTime) == 0) {
-        get().loadTimeWait();
+        get().loadTimeWait(); // устанавливает время ожидания заказа ?
       } else {
-        get().loadTimePred();
+        get().loadTimePred(); // что делает эта функция ?
       }
 
-      // itemsStore.setSumDiv(0);
+      // itemsStore.setSumDiv(0); // это удалить ?
     }, 300);
   },
 
-  //
+  // функция выбора адреса клиента при клике на адрес во вкладке Адрес Клиента
   chooseAddrFull: (addr, key = -1) => {
     console.log('chooseAddrFull ==> ', addr);
 
@@ -760,6 +492,8 @@ export const useHome = create<homeState>((set, get) => ({
 
     // let allPrice = itemsStore.getAllPrice();
 
+    // сумма доставки в зависимости от данных в адресе клиента ??
+
     // if(parseInt(addr.free_drive) == 1 || parseInt(itemsStore.free_drive) == 1){
     //     if( parseInt(allPrice) > 0 ){
     //         itemsStore.setSumDiv(0);
@@ -771,16 +505,16 @@ export const useHome = create<homeState>((set, get) => ({
     // }
 
     setTimeout(() => {
-      get().saveDataOther();
+      get().saveDataOther(); // что делате эта функция?
 
       if (parseInt(get().typeTime) == 0) {
-        get().loadTimeWait();
+        get().loadTimeWait(); // функция устанавливает время ожидания заказа??
       } else {
-        get().loadTimePred();
+        get().loadTimePred(); // что делает эта функция?
       }
 
       if (get().promo_name.length > 0) {
-        get().checkPromo({ target: { value: get().promo_name } });
+        get().checkPromo({ target: { value: get().promo_name } }); // проверка промика клиента?
       }
     }, 300);
   },
@@ -793,45 +527,31 @@ export const useHome = create<homeState>((set, get) => ({
 
     set({ comment: event.target.value });
 
-    get().saveData();
+    get().saveData(); // что делает эта функция ?
   },
 
   // указание сдачи клиенту
   changeSdacha: (event) => {
     set({ sdacha: event.target.value });
 
-    get().saveData();
+    get().saveData(); // что делает эта функция ?
   },
 
   // изменить тип времени
   changeTypeTime: (event, newValue) => {
-    // get().changeDataTime(event) - эта функция необходима ?
-
+    
     console.log('changeTypeTime===>', newValue);
-
+    
     set({ typeTime: newValue });
-
+    
     if (parseInt(newValue) == 0) {
       get().loadTimeWait();
     } else {
       get().loadTimePred();
     }
-
+    
     get().saveData();
   },
-
-  // changeDataTime: (event) => {
-
-  //   set({ typeTime: event.target.value });
-
-  //   // if( type == 'date' ){
-  //   //   setTimeout(() => {
-  //   //     this.loadTimePred();
-  //   //   }, 300)
-  //   // }
-
-  //   get().saveData();
-  // }
 
   // указание время предзаказ
   changeTime: (event) => {
@@ -849,55 +569,39 @@ export const useHome = create<homeState>((set, get) => ({
     get().loadTimePred();
   },
 
-  // кнопка Офомить заказ
+  // кнопка Оформить заказ
   startOrderNext: async () => {
+
+    set({ loading: true });
+
     if (get().clickOrderStart == false || get().loading == true) {
-      get().clickOrderStart = true;
+
+      set({ clickOrderStart: true });
 
       // clearTimeout(this.startOrderIntervalTimer);
 
       // let cartData = itemsStore.getCartData();
 
-      /*if( cartData.orderAddr.street.length == 0 || cartData.orderAddr.home.length == 0 ){
-        this.checkNewAddr(true);
+      // if( cartData.orderAddr.street.length == 0 || cartData.orderAddr.home.length == 0 ){
+      //   this.checkNewAddr(true);
 
-        cartData = itemsStore.getCartData();
-      }
-
-      console.log( 'cartData', cartData )*/
-
-      set({ loading: true });
+      //   cartData = itemsStore.getCartData();
+      // }
 
       let new_cart: { name: any; count: any; price: any; id: any }[] = [];
-      // let cartItems = itemsStore.getItems();
+      let cartItems = get().mainItems;
+      let AllPrice = get().AllPrice;
 
-      let NewAllPrice = 0;
-
-      // cartItems.forEach( (item) => {
-      //   if( item.count > 0 ){
-      //     new_cart.push({
-      //       name: item.name,
-      //       count: item.count,
-      //       price: item.all_price,
-      //       id: item.item_id,
-      //     })
-
-      //     NewAllPrice += item.all_price
-      //   }
-      // })
-
-      // if( parseInt(get().AllPrice) == 0 ){
-
-      //   if( itemsStore.getAllPrice() == 0 ){
-      //     this.setState({
-      //       AllPrice: NewAllPrice
-      //     })
-      //   }else{
-      //     this.setState({
-      //       AllPrice: itemsStore.getAllPrice()
-      //     })
-      //   }
-      // }
+      cartItems.forEach((item: CatItem) => {
+        if(item.count > 0){
+          new_cart.push({
+            name: item.name,
+            count: item.count,
+            price: item.all_price,
+            id: item.id,
+          })
+        }
+      })
 
       // if( parseInt( cartData.orderTimes ) !== 0 ){
       //   if( cartData.orderPredDay.length == 0 && cartData.orderPredTime.length == 0 ){
@@ -924,7 +628,7 @@ export const useHome = create<homeState>((set, get) => ({
 
       //   if( this.state.check_home_true === false ){
 
-      //     //this.checkNewAddr(true);
+      //this.checkNewAddr(true);
 
       //     this.setState({
       //       error: {
@@ -1078,7 +782,7 @@ export const useHome = create<homeState>((set, get) => ({
           });
         }
 
-        // сделать Мой Алерт!!!
+        // изменить на snackbar
         // set({
         //   error: {
         //     title: 'Предупреждение',
@@ -1090,11 +794,11 @@ export const useHome = create<homeState>((set, get) => ({
     }
   },
 
-  //
+  //создание Нового заказа - добавление в корзину Товара из строчки поиска Товара
   addItemCustom: (event, value) => {
-    // console.log("addItemCustom ====>", value);
-
-    const additem: any = get().allItems.find((item: AllItem) => item.name == value);
+    const additem: any = get().allItems.find(
+      (item: AllItem) => item.name === value
+    );
 
     get().addToCart(additem.id);
 
@@ -1109,9 +813,81 @@ export const useHome = create<homeState>((set, get) => ({
     }, 100);
   },
 
-  //
+  //создание Нового заказа - добавление в корзину Товара
   addToCart: (item_id) => {
-    // itemsStore.AddItem(item_id);
+    let check = false;
+    let mainItems = get().mainItems;
+    const allItems = get().allItems;
+
+    mainItems = mainItems.map((item: CatItem) => {
+      if (item.id === item_id) {
+        item.count++;
+        item.all_price = Number(item.count) * Number(item.price);
+        check = true;
+        return item;
+      }
+      return item;
+    });
+
+    if (!check) {
+      const item = allItems.find((item) => item.id === item_id);
+      if (item) {
+        item.count = 1;
+        item.all_price = item.price;
+        mainItems = [...mainItems, ...[item]];
+      }
+    }
+
+    const AllPrice = mainItems.reduce((all: any, it: { all_price: any; }) => all + Number(it.all_price), 0); // без суммы доставки
+
+    set({ mainItems, AllPrice });
+  },
+
+  //создание Нового заказа - удаление из корзины Товара
+  minusToCart: (item_id) => {
+    let mainItems = get().mainItems;
+
+    mainItems = mainItems.reduce((newItems: CatItem[], item: CatItem) => {
+      if (item.id === item_id) {
+        item.count--;
+        item.all_price = Number(item.all_price) - Number(item.price);
+      }
+      return item.count ? (newItems = [...newItems, ...[item]]) : newItems;
+    }, []);
+
+    const AllPrice = mainItems.reduce((all: any, it: { all_price: any; }) => all + Number(it.all_price), 0); // без суммы доставки
+
+    set({ mainItems, AllPrice });
+  },
+
+  // создание Нового заказа - удаление полностью из корзины Товара
+  delToCart: (item_id) => {
+    let mainItems = get().mainItems;
+
+    mainItems = mainItems.filter((item: CatItem) => item.id !== item_id);
+
+    const AllPrice = mainItems.reduce((all: any, it: { all_price: any; }) => all + Number(it.all_price), 0); // без суммы доставки
+
+    set({ mainItems, AllPrice });
+  },
+
+  // создание Нового заказа - указать в инпуте необходимое количество Товара
+  changeCount: (event, item_id) => {
+    let mainItems = get().mainItems;
+    const count = event.target.value;
+
+    mainItems = mainItems.map((item: CatItem) => {
+      if (item.id === item_id) {
+        item.count = count ? count : item.count;
+        item.all_price = Number(item.count) * Number(item.price);
+        return item;
+      }
+      return item;
+    });
+
+    const AllPrice = mainItems.reduce((all: any, it: { all_price: any; }) => all + Number(it.all_price), 0); // без суммы доставки
+
+    set({ mainItems, AllPrice });
   },
 
   // изменить категорию товара во всех позициях
@@ -1121,8 +897,10 @@ export const useHome = create<homeState>((set, get) => ({
     });
   },
 
-  //
+  // выбор адреса клиента в каком модальном окне ??
   chooseAddrFunction: (addr) => {
+
+    console.log('chooseAddrFunction ===>', addr)
     set({
       newAddrInfo: addr,
       point_id: addr.point_id,
@@ -1131,6 +909,7 @@ export const useHome = create<homeState>((set, get) => ({
       list_addr_choose: false,
     });
 
+    // расчет суммы доставки ??
     // let allPrice = itemsStore.getAllPrice();
 
     // if( parseInt(addr.free_drive) == 1 || parseInt(itemsStore.free_drive) == 1 ){
@@ -1158,7 +937,7 @@ export const useHome = create<homeState>((set, get) => ({
     }, 300);
   },
 
-  //
+  // очистить все данные при нажатии на крестик и кнопки Очистить
   clear: () => {
     // itemsStore.clientNumber = '';
     // localStorage.removeItem('clientNumber')
@@ -1225,6 +1004,9 @@ export const useHome = create<homeState>((set, get) => ({
 
       date: '',
       time: '',
+
+      mainItems: [],
+      AllPrice: '0',
     });
 
     // itemsStore.setSumDiv(0);
@@ -1235,7 +1017,7 @@ export const useHome = create<homeState>((set, get) => ({
     }, 300);
   },
 
-  // заказ после подтверждения и проверки
+  // подтверждения заказ в модалке после прохождения проверки
   async trueOrder() {
     let data = {
       type: 'trueOrder',
@@ -1290,13 +1072,238 @@ export const useHome = create<homeState>((set, get) => ({
     }
   },
 
+  // закрытие snackbar
   closeAlert: () => {
-    
     if (document.activeElement === document.body) {
       return;
     }
 
-    set({ openAlert: false })
-      
-  }
+    set({ openAlert: false });
+  },
+
+
+
+
+  // что делает эта функция ?
+  saveData: () => {
+    // let cartData = itemsStore.getCartData();
+    // setTimeout(()=>{
+    //   let data = {
+    //     orderType: parseInt(this.state.activeTab) == 0 || parseInt(this.state.activeTab) == 1 ? parseInt(this.state.activeTab) : 0,
+    //     orderAddr: cartData && cartData.orderAddr ? cartData.orderAddr : '',
+    //     orderPic: this.state.orderPic,
+    //     orderComment: this.state.comment,
+    //     orderTimes: this.state.typeTime,
+    //     orderPredDay: this.state.date,
+    //     orderPredTime: this.state.time,
+    //     orderPay: cartData && cartData.orderPay ? cartData.orderPay : '0',
+    //     orderSdacha: this.state.sdacha,
+    //   };
+    //   itemsStore.saveCartData(data);
+    // }, 100)
+  },
+
+  // устанавливает время ожидания заказа 7
+  loadTimeWait: async () => {
+    // let items = JSON.stringify( itemsStore.getItems() );
+
+    /*if( items == this.loadTimeCheck ){
+        return ;
+      }
+  
+      this.loadTimeCheck = items;*/
+
+    // let cartData = itemsStore.getCartData();
+
+    const data = {
+      types: 'load_time_wait_test',
+      // point_id: cartData.orderType+1 == 1 ? cartData.orderAddr.point_id ?? 0 : cartData.orderPic ?? 0,
+      // type_order: cartData.orderType,
+      city_id: get().cityId,
+
+      // cart: JSON.stringify( itemsStore.getItems() ),
+      // cartPromo: JSON.stringify( itemsStore.getItemsPromo() )
+    };
+
+    const res = await api(data);
+
+    console.log('loadTimeWait ===>', res);
+
+    set({
+      textAvgTime: res?.text ?? 'Среднее время: ~', // временно пока не работает функция loadTimeWait();
+    });
+  },
+
+  // что делает эта функция ?
+  loadTimePred: async () => {
+    // let my_cart = [];
+    // let cartItems = itemsStore.getItems();
+    // let cartData = itemsStore.getCartData();
+
+    // cartItems.forEach(el => {
+    //     my_cart.push({
+    //         item_id: el.item_id,
+    //         count: el.count,
+    //     });
+    // });
+
+    const data = {
+      type: 'get_times_pred_center',
+      // point_id: cartData.orderType+1 == 1 ? cartData.orderAddr.point_id ?? 0 : cartData.orderPic ?? 0,
+      // type_order: cartData.orderType+1,
+      date: get().date,
+      // cart: JSON.stringify( my_cart ),
+    };
+
+    const res = await api(data);
+
+    if (!res.st) {
+      /*this.setState({
+            error: {
+                title: 'Предупреждение', 
+                text: json.text
+            },
+            errorOpen: true
+        })*/
+    } else {
+      set({
+        timePred: res.data,
+      });
+    }
+  },
+
+  // что делает эта функция ?
+  saveDataOther: () => {
+    // let cartData = itemsStore.getCartData();
+    // let addrInfo = this.state.newAddrInfo ? this.state.newAddrInfo : cartData.orderAddr;
+    // setTimeout(()=>{
+    //     let data = {
+    //         orderType: parseInt(this.state.activeTab) == 0 || parseInt(this.state.activeTab) == 1 ? parseInt(this.state.activeTab) : 0,
+    //         orderAddr: {
+    //           id: -1,
+    //           //city_name: itemsStore.getCityRU(),
+    //           street: this.state.newAddrInfo && addrInfo.street ? addrInfo.street : '',
+    //           home: addrInfo.home ? addrInfo.home : '',
+    //           kv: this.state.kv,
+    //           pd: this.state.pd,
+    //           et: this.state.et,
+    //           dom_true: this.state.newAddrDom ? 1 : 0,
+    //           free_drive: addrInfo.free_drive ? addrInfo.free_drive : 0,
+    //           sum_div: addrInfo.sum_div ? addrInfo.sum_div : 0,
+    //           point_id: addrInfo.point_id ? addrInfo.point_id : 0,
+    //           xy: addrInfo.xy ? addrInfo.xy : '',
+    //           pay_active: addrInfo.pay_active ? addrInfo.pay_active : 0,
+    //         },
+    //       orderPic: this.state.orderPic,
+    //       orderComment: this.state.comment,
+    //       orderTimes: this.state.typeTime,
+    //       orderPredDay: this.state.date,
+    //       orderPredTime: this.state.time,
+    //       orderPay: cartData && cartData.orderPay ? cartData.orderPay : '0',
+    //       orderSdacha: this.state.sdacha,
+    //     };
+    //     itemsStore.saveCartData(data);
+    // }, 100)
+  },
+
+  // что делает эта функция ?
+  loadSavedData: () => {
+    // let cartData = itemsStore.getCartData();
+    // if( cartData && cartData.orderType && parseInt(cartData.orderType) == 1 ){
+    //   let my_point = this.state.pic_point.find( (item) => item.id == parseInt(cartData.orderPic) );
+    //   if( my_point ){
+    //     this.choosePic(my_point, false);
+    //   }
+    // }
+    // if( cartData && parseInt(cartData.orderType) == 0 ){
+    //   this.setState({
+    //     newAddrInfo: cartData.orderAddr ? cartData.orderAddr : null,
+    //     point_id: cartData.orderAddr ? cartData.orderAddr.point_id : 0,
+    //     newAddrStreet: cartData.orderAddr && cartData.orderAddr.street,
+    //     newAddrHome: cartData.orderAddr && cartData.orderAddr.home ? cartData.orderAddr.home : '',
+    //     pd: cartData.orderAddr && cartData.orderAddr.pd ? cartData.orderAddr.pd : '',
+    //     et: cartData.orderAddr && cartData.orderAddr.et ? cartData.orderAddr.et : '',
+    //     kv: cartData.orderAddr && cartData.orderAddr.kv ? cartData.orderAddr.kv : '',
+    //     newAddrDom: cartData.orderAddr && parseInt(cartData.orderAddr.dom_true) == 0 ? false : true,
+    //     activeTab: 0
+    //   })
+    //   let allPrice = itemsStore.getAllPrice();
+    //   if( parseInt(cartData.orderAddr ? cartData.orderAddr.free_drive : 0) == 1 || parseInt(itemsStore.free_drive) == 1 ){
+    //     if( parseInt(allPrice) > 0 ){
+    //         itemsStore.setSumDiv(0);
+    //     }else{
+    //       itemsStore.setSumDiv(1);
+    //     }
+    //   }else{
+    //     itemsStore.setSumDiv(parseInt(cartData.orderAddr ? cartData.orderAddr.sum_div : 0));
+    //   }
+    // }
+    // if( cartData && cartData.orderComment != this.state.comment ){
+    //   this.setState({
+    //     comment: cartData.orderComment
+    //   })
+    // }
+    // if( cartData && cartData.orderSdacha && parseInt(cartData.orderSdacha) != parseInt(this.state.sdacha) ){
+    //   this.setState({
+    //     sdacha: cartData.orderSdacha
+    //   })
+    // }
+    // if( localStorage.getItem('clientNumber') ){
+    //   let defValue = localStorage.getItem('clientNumber');
+    //   itemsStore.clientNumber = defValue;
+    //   this.setState({
+    //     number: defValue,
+    //   })
+    //   setTimeout( () => {
+    //     this.getAddr();
+    //   }, 300 )
+    // }
+    // if( localStorage.getItem('promo_name') ){
+    //   let promo = localStorage.getItem('promo_name');
+    //   setTimeout( ()=>{
+    //     this.setState({
+    //       promo_name: promo
+    //     })
+    //     this.checkPromo( {target: {value: promo}} )
+    //   }, 500 )
+    // }
+    // if( parseInt(this.state.typeTime) != parseInt(cartData.orderTimes) ){
+    //   this.setState({
+    //     typeTime: cartData.orderTimes
+    //   })
+    //   this.setState({
+    //     time: cartData.orderPredTime,
+    //     date: cartData.orderPredDay,
+    //     typeTime: cartData.orderTimes,
+    //   })
+    //   if( cartData.orderType == 0 ){
+    //     if( parseInt(cartData.orderTimes) == 1 ){
+    //       this.loadTimePred();
+    //     }else{
+    //       this.loadTimeWait();
+    //     }
+    //   }
+    //   if( parseInt(cartData.orderTimes) == 1 ){
+    //     this.loadTimePred();
+    //   }else{
+    //     this.loadTimeWait();
+    //   }
+    // }
+  },
+
+
+  // эта функция необходима ?
+
+  // changeDataTime: (event) => {
+
+  //   set({ typeTime: event.target.value });
+
+    // if( type == 'date' ){
+    //   setTimeout(() => {
+    //     this.loadTimePred();
+    //   }, 300)
+    // }
+
+  //   get().saveData();
+  // }
 }));

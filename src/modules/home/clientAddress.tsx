@@ -14,7 +14,7 @@ export default function ClientAddress() {
 
   return (
     <List component="nav" aria-label="main mailbox folders" style={{ maxHeight: 150, overflow: 'auto' }}>
-    { /* мой адрес */ }
+    { /* Адрес клиента */ }
     {clientAddr.map( (item: any, key: number) =>
       <ListItemButton key={key} selected={chooseAddr === key} onClick={() => chooseAddrFull(item, key)} style={{ paddingTop: 0, paddingBottom: 0 }}>
         <ListItemText primary={ 
@@ -26,7 +26,7 @@ export default function ClientAddress() {
         } />
       </ListItemButton>
     ) }
-    { /* /мой адрес/ */ }
+    { /* Адрес клиента */ }
   </List>
   );
 }
