@@ -1316,7 +1316,7 @@ export const useHome = createWithEqualityFn<homeState>((set, get) => ({
         // number: itemsStore.clientNumber
       };
 
-      //const json = await api(data);
+      const json = await api(data);
 
       setTimeout(() => {
         get().clickOrderStart = false;
