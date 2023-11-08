@@ -1,8 +1,9 @@
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
+import { shallow } from 'zustand/shallow';
 import { promoState } from './types';
 import { api } from '@/components/api';
 
-export const usePromo = create<promoState>((set, get) => ({
+export const usePromo = createWithEqualityFn<promoState>((set, get) => ({
   loading: false,
   number: '',
   promos: [],
@@ -12,7 +13,7 @@ export const usePromo = create<promoState>((set, get) => ({
   changeNumber: (event: { target: { value: string } }) => {
     const onlyNums = event.target.value.replace(/[^0-9]/g, '');
 
-    if (onlyNums.length < 11) {
+    if (onlyNums.length < 12) {
       set({ number: onlyNums });
     }
   },
@@ -34,4 +35,4 @@ export const usePromo = create<promoState>((set, get) => ({
       loading: false,
     });
   },
-}));
+}), shallow);

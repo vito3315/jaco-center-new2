@@ -21,6 +21,7 @@ export interface Cat {
 }
 
 export interface CatItem {
+  item_id: string | number;
   one_price: any;
   new_one_price: any;
   all_price: number;
@@ -54,6 +55,8 @@ export interface CatItem2 {
 }
 
 export interface AllItem {
+  img_new_update: any;
+  img_new: any;
   all_price: any;
   count: any;
   id: string;
@@ -128,7 +131,7 @@ export interface homeState {
   MyPromos: Promos[];
   loading: boolean;
   cityId: string;
-  promo_name: any; // string | string[] | (string | string[])[] | null;
+  promo_name: any;
   orderPromoText: string;
   promoST: boolean;
   checkClear: boolean;
@@ -153,17 +156,17 @@ export interface homeState {
   list_addr_for_choose: AddrChoose[];
   timePred: []; // ??
   list_addr_choose: boolean;
-  activeTab: number | string;
-  typeTime: any; // number | string;
+  activeTab: any;
+  typeTime: any;
   date: string;
   time: string;
   point_id: number | string;
   orderPic: number | string;
-  newAddrInfo: string | null;
+  newAddrInfo: any;
   picPointInfo: PicPointInfo | null;
   chooseAddr: number | null;
-  sumDiv: string;
-  AllPrice: string;
+  sumDiv: any;
+  AllPrice: any;
   activeCat: number | string;
   newAddrStreet: string | string[] | (string | string[])[] | null;
   pd: string;
@@ -171,13 +174,17 @@ export interface homeState {
   kv: string;
   comment: string;
   sdacha: string;
-  // textAvgTime: string;
-  textAvgTime: any; // временно пока не работает функция loadTimeWait();
+  textAvgTime: any;
   openAlert: boolean;
   status: boolean;
   text: string;
-  // mainItems: AllItem[];
+  items: any,
   mainItems: any;
+  dopItems: any;
+  promoItems: any,
+  free_drive: any;
+  itemsPromo: any;
+
   getDataForm: () => void;
   getAddr: () => void;
   saveData: () => void;
@@ -209,10 +216,6 @@ export interface homeState {
   changeDomTrue: (type: boolean) => void;
   choosePic: (point: PicPointInfo, is_save: boolean) => void;
   chooseAddrFull: (addr: any, key: number) => void; // ??
-  // changeTypeTime: (
-  //   event: { target: { value: string } } | null,
-  //   newValue?: number | string
-  // ) => void;
   changeTypeTime: (event: any, newValue?: any) => void;
   newOrder: any; // ??
   startOrderIntervalTimer: any; // ??
@@ -228,11 +231,11 @@ export interface homeState {
   delToCart: (item_id: number | string) => void;
   changeCount: (event: any, item_id: number | string) => void;
   changeCat: (event: any, value: number | string) => void;
-  // chooseAddrFunction: (addr: string | null) => void;
   chooseAddrFunction: (addr: any) => void;
   clear: () => void;
   trueOrder: () => void;
-  checkLogin: () => void;
   closeAlert: () => void;
-  
+  setCityID: (cityId: string) => void;
+  setItems: () => void;
+  getItems: () => void;
 }

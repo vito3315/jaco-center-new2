@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useHome } from './store';
 import { homeState } from './types';
 import { MyTextInput } from '@/ui';
@@ -7,9 +5,9 @@ import { MyTextInput } from '@/ui';
 import Grid from '@mui/material/Grid';
 
 export default function Comment() {
-  console.log('render Comment');
+  //console.log('render Comment');
 
-  const [comment, sdacha, changeComment, changeSdacha] = useHome((state: homeState) => [state.comment, state.sdacha, state.changeComment, state.changeSdacha], shallow);
+  const [comment, sdacha, changeComment, changeSdacha] = useHome((state: homeState) => [state.comment, state.sdacha, state.changeComment, state.changeSdacha]);
 
   return (
     <Grid container spacing={2} marginTop={0}>

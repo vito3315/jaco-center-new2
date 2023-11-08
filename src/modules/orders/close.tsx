@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { shallow } from 'zustand/shallow';
 import { useOrders } from './store';
 import { ordersState } from './types';
 import { MyAlert, MyTextInput } from '../../ui';
@@ -18,9 +17,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 
 export default function Close() {
-  console.log('render Close');
+  //console.log('render Close');
 
-  const [showOrder, openClose, openAlert, status, text, closeOrder] = useOrders((state: ordersState) => [state.showOrder, state.openClose, state.openAlert, state.status, state.text, state.closeOrder], shallow);
+  const [showOrder, openClose, openAlert, status, text, closeOrder] = useOrders((state: ordersState) => [state.showOrder, state.openClose, state.openAlert, state.status, state.text, state.closeOrder]);
 
   const radiogroup_options = [
     { id: '0', label: 'Решили отредактировать заказ', value: 0 },

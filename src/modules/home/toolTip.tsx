@@ -11,7 +11,7 @@ type Props = {
 }
 
 export default function MyToolTip({ tmp_desc, info_weight }: Props) {
-  console.log('render MyToolTip');
+  //console.log('render MyToolTip');
 
   const [open, setOpen] = useState(false);
 

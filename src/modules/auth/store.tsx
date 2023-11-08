@@ -1,8 +1,9 @@
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
+import { shallow } from 'zustand/shallow';
 import { authState } from './types';
 import { api } from '@/components/api';
 
-export const useAuth = create<authState>((set, get) => ({
+export const useAuth = createWithEqualityFn<authState>((set, get) => ({
   loading: false,
   number: '',
   password: '',
@@ -49,14 +50,14 @@ export const useAuth = create<authState>((set, get) => ({
       pass: get().password,
     };
 
-    let res = await api(data);
+    const res = await api(data);
 
     if (res.st) {
-      // itemsStore.setToken(res.token, res.name);
+      localStorage.setItem('token', res.token);
 
-      // setTimeout( () => {
-      window.location.href = '/';
-      // }, 500)
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 500);
     } else {
       set({
         status: res.st,
@@ -67,4 +68,31 @@ export const useAuth = create<authState>((set, get) => ({
 
     set({ loading: false });
   },
-}));
+
+  // проверка авторизации
+  checkLogin: async () => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      const data = {
+        type: 'check_login_center',
+        token,
+      };
+
+      const res = await api(data);
+
+      if (res) {
+      } else {
+        localStorage.removeItem('token');
+        setTimeout(() => {
+          window.location.href = '/auth';
+        }, 500);
+      }
+    } else {
+      localStorage.removeItem('token');
+      setTimeout(() => {
+        window.location.href = '/auth';
+      }, 500);
+    }
+  },
+}), shallow);

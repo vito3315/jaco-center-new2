@@ -1,18 +1,21 @@
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
+import { shallow } from 'zustand/shallow';
 import { ordercookState } from './types';
 import { api } from '@/components/api';
 
-export const useOrderCook = create<ordercookState>((set, get) => ({
+export const useOrderCook = createWithEqualityFn<ordercookState>((set, get) => ({
   loading: false,
   points: [],
   point: '',
   orders: null,
+
   // изменения Точки в селекте
   changePoint(event){
     set({point: event.target.value});
 
     get().getCookOrders();
   },
+
   // получение данных для Form
   getDataForm: async (city_id) => {
     set({ loading: true });
@@ -33,6 +36,7 @@ export const useOrderCook = create<ordercookState>((set, get) => ({
     get().getCookOrders();
 
   },
+  
   // получение заказов Точки
   getCookOrders: async () => {
     set({ loading: true });
@@ -50,4 +54,4 @@ export const useOrderCook = create<ordercookState>((set, get) => ({
     });
 
   }
-}));
+}), shallow);

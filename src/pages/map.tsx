@@ -1,23 +1,23 @@
+import { useEffect } from 'react';
+
 import dynamic from 'next/dynamic';
 
 import { useMap } from '@/modules/map/store';
 import { mapState } from '@/modules/map/types';
-import Loading from "@/components/loading";
-import Grid from '@mui/material/Grid';
+const MapPage = dynamic(() => import('@/modules/map/page'));
 
-const Form = dynamic(() => import('@/modules/map/form'));
-const Map = dynamic(() => import('@/modules/map/map'));
+export default function Map() {
+  //console.log('render Map');
 
-export default function MapPages() {
-  console.log('render MapPages');
+  const [getDataForm] = useMap((state: mapState) => [state.getDataForm]);
 
-  const loading = useMap((state: mapState) => state.loading);
+  useEffect(() => {
+    if ((window.location.protocol == 'http:' || window.location.protocol == 'http') && window.location.hostname != 'localhost') {
+      window.location.href = 'https://jacocallcenter.ru' + window.location.pathname;
+    }
 
-  return (
-    <Grid container spacing={3}>
-      <Loading loading={loading}/>
-      <Form />
-      <Map />
-    </Grid>
-  );
+    getDataForm();
+  }, [getDataForm]);
+
+  return <MapPage />;
 }

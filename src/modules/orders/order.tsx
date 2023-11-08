@@ -1,6 +1,5 @@
 import { useOrders } from './store';
 import { ordersState } from './types';
-import { shallow } from 'zustand/shallow';
 
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
@@ -24,13 +23,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 
 export default function Order() {
-  console.log('render Order');
+  //console.log('render Order');
 
-  const [showOrder, openOrder] = useOrders((state: ordersState) => [state.showOrder, state.openOrder], shallow);
-
-  // сделать после страницы Оформить заказ
-  const repeatOrder = () => {};
-  const fakeUser = () => {};
+  const [showOrder, openOrder, repeatOrder, fakeUser] = useOrders((state: ordersState) => [state.showOrder, state.openOrder, state.repeatOrder, state.fakeUser]);
 
   return (
     <Dialog

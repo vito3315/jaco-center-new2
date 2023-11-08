@@ -1,26 +1,29 @@
+import { useEffect } from 'react';
+
 import dynamic from 'next/dynamic';
 
-import { useOrders } from "@/modules/orders/store";
-import { ordersState } from "@/modules/orders/types";
-import Loading from "@/components/loading";
+import { useOrders } from '@/modules/orders/store';
+import { ordersState } from '@/modules/orders/types';
+import { useAuth } from '@/modules/auth/store';
+import { authState } from '@/modules/auth/types';
 
-const Form = dynamic(() => import('@/modules/orders/form'));
-const TableData = dynamic(() => import('@/modules/orders/table'));
-const Order = dynamic(() => import('@/modules/orders/order'));
-const Close = dynamic(() => import('@/modules/orders/close'));
+const OrdersPage = dynamic(() => import('@/modules/orders/page'));
 
 export default function Orders() {
-  console.log('render OrdersPAge');
+  //console.log('render OrdersPage');
 
-  const loading = useOrders((state: ordersState) => state.loading);
+  const getDataForm = useOrders((state: ordersState) => state.getDataForm);
+  const checkLogin = useAuth((state: authState) => state.checkLogin);
 
-  return (
-    <>
-      <Loading loading={loading}/>
-      <Form />
-      <TableData />
-      <Order />
-      <Close />
-    </>
-  );
+  useEffect(() => {
+    if ((window.location.protocol == 'http:' || window.location.protocol == 'http') && window.location.hostname != 'localhost') {
+      window.location.href = 'https://jacocallcenter.ru' + window.location.pathname;
+    }
+
+    checkLogin();
+
+    getDataForm();
+  }, [getDataForm, checkLogin]);
+
+  return <OrdersPage />;
 }

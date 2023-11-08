@@ -10,7 +10,7 @@ type Props = {
 }
 
 function Row ({ item }: Props) {
-  console.log('render Row');
+  //console.log('render Row');
 
   return (
     <TableRow style={parseInt(item.is_delete) == 1 ? { backgroundColor: 'red', color: '#fff', fontWeight: 'bold' } : {}}>

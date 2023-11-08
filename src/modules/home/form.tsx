@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { shallow } from 'zustand/shallow';
+import React from 'react';
 
 import { MyTextInput, MySelect, MyAutocomplite } from '@/ui';
 import { a11yProps } from '@/lib';
@@ -19,25 +18,10 @@ import Tab from '@mui/material/Tab';
 import CloseIcon from '@mui/icons-material/Close';
 
 export default function Form() {
-  console.log('render Form');
+  //console.log('render Form');
 
-  const [cityId, cityList, changeCity, getDataForm, checkPromo, MyPromos, promo_name, orderPromoText, promoST, saveNumber, number, changeNumber, activeTab, changeTab, checkLogin] = useHome((state: homeState) => 
-    [state.cityId, state.cityList, state.changeCity, state.getDataForm, state.checkPromo, state.MyPromos, state.promo_name, state.orderPromoText, state.promoST, state.saveNumber, state.number, state.changeNumber, state.activeTab, state.changeTab, state.checkLogin], shallow);
-
-  useEffect(() => {
-    getDataForm();
-    document.title = "Оформление нового заказа";
-
-    // this.interval = setInterval(() => this.checkLogin(), 1000*60*60);
-    // checkLogin(); 
-
-    // if((window.location.protocol == 'http:' || window.location.protocol == 'http') && window.location.hostname != 'localhost'){
-    //   window.location.href = 'https://jacocallcenter.ru'+window.location.pathname;
-    // }
-
-    //  autorun(() ??
-    
-  }, [checkLogin, getDataForm]);
+  const [cityId, cityList, changeCity, checkPromo, MyPromos, promo_name, orderPromoText, promoST, saveNumber, number, changeNumber, activeTab, changeTab] = useHome((state: homeState) => 
+    [state.cityId, state.cityList, state.changeCity, state.checkPromo, state.MyPromos, state.promo_name, state.orderPromoText, state.promoST, state.saveNumber, state.number, state.changeNumber, state.activeTab, state.changeTab]);
 
   return (
 

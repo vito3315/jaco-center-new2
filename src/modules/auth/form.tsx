@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { shallow } from 'zustand/shallow';
 import Image from 'next/image';
 
 import { MyTextInput, MyAlert } from '@/ui';
@@ -10,20 +8,9 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
 export default function Form() {
-  console.log('render Form');
+  //console.log('render Form');
 
-  const [number, password, changeNumber, changePassword, login, openAlert, status, text, enter] = useAuth((state: authState) => 
-    [state.number, state.password, state.changeNumber, state.changePassword, state.login, state.openAlert, state.status, state.text, state.enter], shallow);
-
-  useEffect(() => {
-    document.title = 'Авторизация';
-
-    // itemsStore.setPage('auth');
-
-    // if((window.location.protocol == 'http:' || window.location.protocol == 'http') && window.location.hostname != 'localhost'){
-    //   window.location.href = 'https://jacocallcenter.ru'+window.location.pathname;
-    // }
-  }, []);
+  const [number, password, changeNumber, changePassword, login, openAlert, status, text, enter] = useAuth((state: authState) => [state.number, state.password, state.changeNumber, state.changePassword, state.login, state.openAlert, state.status, state.text, state.enter]);
 
   return (
     <>

@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useHome } from './store';
 import { homeState, Cat, CatItem } from './types';
 import { a11yProps, TabPanel } from '@/lib';
@@ -13,10 +11,9 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 export default function AllItems() {
-  console.log('render AllItems');
+  //console.log('render AllItems');
 
-  const [allItems, cats, addToCart, activeCat, changeCat] = useHome(
-    (state: homeState) => [state.allItems, state.cats, state.addToCart, state.activeCat, state.changeCat], shallow);
+  const [allItems, cats, addToCart, activeCat, changeCat] = useHome((state: homeState) => [state.allItems, state.cats, state.addToCart, state.activeCat, state.changeCat]);
 
   return (
     <Grid item xs={12}>
@@ -25,9 +22,7 @@ export default function AllItems() {
       <>
         <AppBar position="static" style={{ backgroundColor: '#fff', borderRadius: 12, overflow: 'hidden' }}>
           <Tabs value={activeCat} onChange={changeCat} indicatorColor="secondary" variant="fullWidth">
-            {cats.map((item: Cat, key: number) =>
-              <Tab label={item.name} style={{ minWidth: 'auto' }} key={key} {...a11yProps(key)} />
-            ) }
+            {cats.map((item: Cat, key: number) => <Tab label={item.name} style={{ minWidth: 'auto' }} key={key} {...a11yProps(key)} />)}
           </Tabs>
         </AppBar>
 
@@ -45,7 +40,7 @@ export default function AllItems() {
 
                   </Paper>
                 </Grid>
-              ) }
+              )}
             </Grid>
           </TabPanel>
         )}

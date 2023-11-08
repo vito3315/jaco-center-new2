@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useHome } from './store';
 import { homeState, PicPoint } from './types';
 
@@ -7,9 +5,9 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 
 export default function Pickup() {
-  console.log('render Pickup');
+  //console.log('render Pickup');
 
-  const [pic_point, choosePic, orderPic] = useHome((state: homeState) => [state.pic_point, state.choosePic, state.orderPic], shallow);
+  const [pic_point, choosePic, orderPic] = useHome((state: homeState) => [state.pic_point, state.choosePic, state.orderPic]);
 
   return (
     <Grid container direction="column" spacing={0}>

@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useHome } from './store';
 import { homeState } from './types';
 import { MySelect } from '@/ui';
@@ -12,10 +10,10 @@ import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar';
 
 export default function Time() {
-  console.log('render Time');
+  //console.log('render Time');
 
   const [typeTime, changeTypeTime, textAvgTime, date_pred, timePred, date, time, changeTime, changeDate] = useHome((state: homeState) => 
-    [state.typeTime, state.changeTypeTime, state.textAvgTime, state.date_pred, state.timePred, state.date, state.time, state.changeTime, state.changeDate], shallow);
+    [state.typeTime, state.changeTypeTime, state.textAvgTime, state.date_pred, state.timePred, state.date, state.time, state.changeTime, state.changeDate]);
 
   return (
     <Grid container spacing={2} marginTop={0}>

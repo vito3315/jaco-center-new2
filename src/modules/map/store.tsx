@@ -1,8 +1,9 @@
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
+import { shallow } from 'zustand/shallow';
 import { mapState } from './types';
 import { api } from '@/components/api';
 
-export const useMap = create<mapState>((set, get) => ({
+export const useMap = createWithEqualityFn<mapState>((set, get) => ({
   loading: false,
   cities: [],
   city: '',
@@ -143,5 +144,5 @@ export const useMap = create<mapState>((set, get) => ({
       get().loadMap();
     }
   },
-}));
+}), shallow);
 

@@ -6,6 +6,7 @@ export interface authState {
   status: boolean;
   text: string;
   login: () => void;
+  checkLogin: () => void;
   enter: (event: { key: string } ) => void;
   changeNumber: (event: { target: { value: string } }) => void;
   changePassword: (event: { target: { value: string } }) => void;

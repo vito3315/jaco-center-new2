@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useHome } from './store';
 import { homeState } from './types';
 import { MyAutocomplite } from '@/ui';
@@ -7,9 +5,9 @@ import { MyAutocomplite } from '@/ui';
 import Grid from '@mui/material/Grid';
 
 export default function Orders() {
-  console.log('render Orders');
+  //console.log('render Orders');
 
-  const [allItems, cats, thisItem, addItemCustom] = useHome((state: homeState) => [state.allItems, state.cats, state.thisItem, state.addItemCustom], shallow);
+  const [allItems, cats, thisItem, addItemCustom] = useHome((state: homeState) => [state.allItems, state.cats, state.thisItem, state.addItemCustom]);
 
   return (
     <Grid item xs={4}>

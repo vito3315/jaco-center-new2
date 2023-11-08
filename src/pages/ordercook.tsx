@@ -1,22 +1,29 @@
+import { useEffect } from 'react';
+
 import dynamic from 'next/dynamic';
 
+import { useAuth } from '@/modules/auth/store';
+import { authState } from '@/modules/auth/types';
 import { useOrderCook } from '@/modules/ordercook/store';
 import { ordercookState } from '@/modules/ordercook/types';
-import Loading from "@/components/loading";
 
-const Form = dynamic(() => import('@/modules/ordercook/form'));
-const TableData = dynamic(() => import('@/modules/ordercook/table'));
+const OrderCookPage = dynamic(() => import('@/modules/ordercook/page'));
 
 export default function OrderCook() {
-  console.log('render OrderCook');
+  //console.log('render OrderCook');
 
-  const loading = useOrderCook((state: ordercookState) => state.loading);
+  const getDataForm = useOrderCook((state: ordercookState) => state.getDataForm);
+  const checkLogin = useAuth((state: authState) => state.checkLogin);
 
-  return (
-    <>
-      <Loading loading={loading}/>
-      <Form />
-      <TableData />
-    </>
-  );
+  useEffect(() => {
+    if ((window.location.protocol == 'http:' || window.location.protocol == 'http') && window.location.hostname != 'localhost') {
+      window.location.href = 'https://jacocallcenter.ru' + window.location.pathname;
+    }
+
+    checkLogin();
+
+    getDataForm(1);
+  }, [checkLogin, getDataForm]);
+
+  return <OrderCookPage />;
 }

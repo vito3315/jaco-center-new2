@@ -1,7 +1,7 @@
 import Grid from '@mui/material/Grid';
 
 export default function Map() {
-  console.log('render Map');
+  //console.log('render Map');
 
   return (
    <Grid item xs={12} >

@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useHome } from './store';
 import { homeState } from './types';
 
@@ -10,11 +8,9 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
 export default function Delivery() {
-  console.log('render Delivery');
+  //console.log('render Delivery');
 
-  const [checkNewAddr, all_addr, newAddrStreet, changeAddrCustom, newAddrHome, changeAddrHome, pd, et, kv, changeAddrEt, changeAddrPd, changeAddrKv, newAddrDom, changeDomTrue] 
-    = useHome((state: homeState) => [state.checkNewAddr, state.all_addr, state.newAddrStreet, state.changeAddrCustom, state.newAddrHome, state.changeAddrHome, state.pd, state.et,
-      state.kv, state.changeAddrEt, state.changeAddrPd, state.changeAddrKv, state.newAddrDom, state.changeDomTrue], shallow);
+  const [checkNewAddr, all_addr, newAddrStreet, changeAddrCustom, newAddrHome, changeAddrHome, pd, et, kv, changeAddrEt, changeAddrPd, changeAddrKv, newAddrDom, changeDomTrue] = useHome((state: homeState) => [state.checkNewAddr, state.all_addr, state.newAddrStreet, state.changeAddrCustom, state.newAddrHome, state.changeAddrHome, state.pd, state.et, state.kv, state.changeAddrEt, state.changeAddrPd, state.changeAddrKv, state.newAddrDom, state.changeDomTrue]);
 
   return (
     <Grid container spacing={2}>

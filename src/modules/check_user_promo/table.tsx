@@ -1,4 +1,3 @@
-import { shallow } from 'zustand/shallow';
 import { usePromo } from './store';
 import { promoState, Promo_lk, Promo_sms } from './types';
 
@@ -11,9 +10,9 @@ import TableRow from '@mui/material/TableRow';
 import TableContainer from '@mui/material/TableContainer';
 
 export default function TableData() {
-  console.log('render Table');
+  //console.log('render Table');
 
-  const [promos, promos_sms] = usePromo((state: promoState) => [state.promos, state.promos_sms], shallow);
+  const [promos, promos_sms] = usePromo((state: promoState) => [state.promos, state.promos_sms]);
   
   return (
     <>

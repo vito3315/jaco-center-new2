@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Link from 'next/link';
 
@@ -16,102 +16,74 @@ import ListItemButton from '@mui/material/ListItemButton';
 
 export const Header = () => {
 
-  // if((window.location.protocol == 'http:' || window.location.protocol == 'http') && window.location.hostname != 'localhost'){
-  //   window.location.href = 'https://jacocallcenter.ru'+window.location.pathname;
-  // }
-
-  // logOut(){
-  // }
-
-  // if( this.state.page == 'auth' ){
-  //   return null;
-  // }
-
   const [open, setOpen] = useState(false);
 
-  const toggleDrawer = (open: boolean | ((prevState: boolean) => boolean)) => {
-    setOpen(open);
+  useEffect(() => {
+    if((window.location.protocol == 'http:' || window.location.protocol == 'http') && window.location.hostname != 'localhost'){
+      window.location.href = 'https://jacocallcenter.ru'+window.location.pathname;
+    }
+  }, []);
+
+  const logOut = () => {
+    localStorage.removeItem('token');
+    setTimeout( () => {
+      window.location.href = '/auth'
+    }, 500 )
   }
+
+  const toggleDrawer = (open: boolean | ((prevState: boolean) => boolean)) => setOpen(open);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" style={{ backgroundColor: '#fff' }}>
         <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            aria-label="menu"
-            onClick={() => toggleDrawer(true)}
-          >
+          <IconButton size="large" edge="start" aria-label="menu" onClick={() => toggleDrawer(true)}>
             <MenuIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      <Drawer
-        anchor={'left'}
-        open={open}
-        onClick={() => toggleDrawer(false)}
-      >
+      <Drawer anchor={'left'} open={open} onClick={() => toggleDrawer(false)}>
         <div role="presentation">
-          <Link
-            href="/"
-            passHref
-            onClick={() => toggleDrawer(false)}
-          >
+
+          <Link href="/home" passHref onClick={() => toggleDrawer(false)}>
             <ListItemButton style={{ color: '#000' }}>
               <Typography variant="body1">Оформить заказ</Typography>
             </ListItemButton>
           </Link>
-          <Link
-            href="/orders"
-            passHref
-            onClick={() => toggleDrawer(false)}
-          >
+
+          <Link href="/orders" passHref onClick={() => toggleDrawer(false)}>
             <ListItemButton style={{ color: '#000' }}>
               <Typography variant="body1">Список заказов</Typography>
             </ListItemButton>
           </Link>
-          <Link
-            href="/ordercook"
-            passHref
-            onClick={() => toggleDrawer(false)}
-          >
+
+          <Link href="/ordercook" passHref onClick={() => toggleDrawer(false)}>
             <ListItemButton style={{ color: '#000' }}>
               <Typography variant="body1">Заказы на кухне</Typography>
             </ListItemButton>
           </Link>
 
-          <Link
-            href="/check_user_promo"
-            passHref
-            onClick={() => toggleDrawer(false)}
-          >
+          <Link href="/check_user_promo" passHref onClick={() => toggleDrawer(false)}>
             <ListItemButton style={{ color: '#000' }}>
-              <Typography variant="body1">
-                Проверка промокода клиента
-              </Typography>
+              <Typography variant="body1">Проверка промокода клиента</Typography>
             </ListItemButton>
           </Link>
 
-          <Link
-            href="/map"
-            passHref
-            onClick={() => toggleDrawer(false)}
-          >
+          <Link href="/map" passHref onClick={() => toggleDrawer(false)}>
             <ListItemButton style={{ color: '#000' }}>
               <Typography variant="body1">Карта</Typography>
             </ListItemButton>
           </Link>
 
           <Divider />
+
           <List>
-            <ListItemButton
-            //onClick={this.logOut.bind(this)}
-            >
+            <ListItemButton onClick={logOut}>
               <ListItemText primary={'Выйти'} />
             </ListItemButton>
           </List>
+
         </div>
       </Drawer>
     </Box>

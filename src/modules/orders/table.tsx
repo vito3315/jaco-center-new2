@@ -11,7 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import TableContainer from '@mui/material/TableContainer';
 
 export default function TableData() {
-  console.log('render Table');
+  // console.log('render Table');
 
   const orders = useOrders((state: ordersState) => state.orders);
 

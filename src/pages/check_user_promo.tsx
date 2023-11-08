@@ -1,23 +1,27 @@
+import { useEffect } from 'react';
+
 import dynamic from 'next/dynamic';
 
 import { usePromo } from '@/modules/check_user_promo/store';
-import { promoState } from '@/modules/check_user_promo/types';
-import Loading from "@/components/loading";
-import Grid from '@mui/material/Grid';
+import { useAuth } from '@/modules/auth/store';
+import { authState } from '@/modules/auth/types';
 
-const Form = dynamic(() => import('@/modules/check_user_promo/form'));
-const TableData = dynamic(() => import('@/modules/check_user_promo/table'));
+const CheckUserPromoPage = dynamic(() => import('@/modules/check_user_promo/page'));
 
 export default function CheckUserPromo() {
-  console.log('render CheckUserPromo');
+  //console.log('render CheckUserPromo');
 
-  const loading = usePromo((state: promoState) => state.loading);
+  const checkLogin = useAuth((state: authState) => state.checkLogin);
 
-  return (
-    <Grid container spacing={3}>
-      <Loading loading={loading}/>
-      <Form />
-      <TableData />
-    </Grid>
-  );
+  useEffect(() => {
+    if ((window.location.protocol == 'http:' || window.location.protocol == 'http') && window.location.hostname != 'localhost') {
+      window.location.href = 'https://jacocallcenter.ru' + window.location.pathname;
+    }
+
+    usePromo.setState({ promos: [], promos_sms: [], number: '' });
+
+    checkLogin();
+  }, [checkLogin]);
+
+  return <CheckUserPromoPage />;
 }

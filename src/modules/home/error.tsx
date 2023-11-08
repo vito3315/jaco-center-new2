@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useHome } from './store';
 import { homeState } from './types';
 
@@ -12,9 +10,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 
 export default function ErrorData() {
-  console.log('render ErrorData');
+  //console.log('render ErrorData');
 
-  const [errorOpen, error] = useHome((state: homeState) => [state.errorOpen, state.error], shallow);
+  const [errorOpen, error] = useHome((state: homeState) => [state.errorOpen, state.error]);
 
   return (
     <Dialog

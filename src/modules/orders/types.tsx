@@ -222,4 +222,6 @@ export interface ordersState {
   filterOrders: () => void;
   getOrder: (order_id: string | number) => void;
   closeOrder: (obj: {typeCreate: string, order_id: string, point_id: string, ans: string}) => void;
+  repeatOrder: () => void;
+  fakeUser: () => void;
 }

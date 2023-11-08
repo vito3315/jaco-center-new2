@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useHome } from './store';
 import { homeState } from './types';
 
@@ -13,9 +11,9 @@ import PlaceOrder from './placeOrder'
 import Grid from '@mui/material/Grid';
 
 export default function TabTable() {
-  console.log('render TabTable');
+  //console.log('render TabTable');
 
-  const [activeTab, all_addr, pic_point, clientAddr] = useHome((state: homeState) => [state.activeTab, state.all_addr, state.pic_point, state.clientAddr], shallow);
+  const [activeTab, all_addr, pic_point, clientAddr] = useHome((state: homeState) => [state.activeTab, state.all_addr, state.pic_point, state.clientAddr]);
 
   return (
     <Grid item xs={4} style={{ paddingTop: 5 }}>

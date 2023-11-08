@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useHome } from './store';
 import { homeState, CatItem } from './types';
 
@@ -15,55 +13,9 @@ import TableRow from '@mui/material/TableRow';
 import TableContainer from '@mui/material/TableContainer';
 
 export default function TableData() {
-  console.log('render Table');
+  //console.log('render Table');
 
-  // const [mainItems, setMainItems] = useState([]);
-  // const [dopItems, setDopItems] = useState([]);
-  // const [promoItems, setPromoItems] = useState([]);
-
-  //const autorun = () => {
-    // if( this._isMounted ){
-    //   let my_cart = itemsStore.getItems();
-    //   let all_items = itemsStore.getAllItems();
-    //   let promoItems = itemsStore.getItemsPromo();
-    //   let cartPromoItems = [];
-    //   promoItems.map((item) => {
-    //     let thisitem = all_items.find( (item_) => item_.id == item.item_id );
-    //     if(thisitem){
-    //       cartPromoItems.push({
-    //         id: item.item_id,
-    //         cat_id: thisitem.cat_id,
-    //         name: thisitem.name,
-    //         desc: thisitem.tmp_desc,
-    //         count: item.count,
-    //         all_price: item.all_price,
-    //         img: thisitem.img_new,
-    //         imgUpdate: thisitem.img_new_update,
-    //       })
-    //     }
-    //   })
-    //   let main_items = [],
-    //       dop_items = [];
-    //   if( all_items.length > 0 ){
-    //     my_cart.map( (it) => {
-    //       let cart_info = all_items.find( (item) => item.id == it.item_id );
-    //       if( !cart_info ){
-    //         alert('В корзине произошла ошибка');
-    //       }
-    //       if( cart_info && parseInt(cart_info.cat_id) == 7 ){
-    //         dop_items.push( it );
-    //       }else{
-    //         main_items.push( it );
-    //       }
-    //     } )
-    // setDopItems(dop_items);
-    // setMainItems(main_items);
-    // setPromoItems(cartPromoItems);
-    //   }
-    // }
-  // };
-
-  const [mainItems] = useHome((state: homeState) => [state.mainItems], shallow);
+  const [mainItems, dopItems, promoItems] = useHome((state: homeState) => [state.mainItems, state.dopItems, state.promoItems]);
 
   return (
     <Grid item xs={8} style={{ paddingTop: 5 }}>
@@ -84,13 +36,13 @@ export default function TableData() {
                 <Row key={key} item={item} type="main" />
               ))}
 
-              {/* {dopItems.map((item, key) => (
+              {dopItems.map((item: any, key: number) => (
                 <Row key={key} item={item} type="dop" />
               ))}
 
-              {promoItems.map((item, key) => (
+              {promoItems.map((item: any, key: number) => (
                 <Row key={key} item={item} type="promo" />
-              ))} */}
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
